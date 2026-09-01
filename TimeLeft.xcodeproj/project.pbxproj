@@ -1,0 +1,224 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A00000010000000000000001 /* TimeLeftApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000110000000000000001 /* TimeLeftApp.swift */; };
+		A00000010000000000000002 /* Preferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000110000000000000002 /* Preferences.swift */; };
+		A00000010000000000000003 /* CountdownEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000110000000000000003 /* CountdownEngine.swift */; };
+		A00000010000000000000004 /* MenuContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000110000000000000004 /* MenuContentView.swift */; };
+		A00000010000000000000005 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000110000000000000005 /* SettingsView.swift */; };
+		A00000010000000000000008 /* SettingsWindowManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000110000000000000009 /* SettingsWindowManager.swift */; };
+		A00000010000000000000006 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A00000110000000000000006 /* Assets.xcassets */; };
+		A00000010000000000000007 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A00000110000000000000007 /* Info.plist */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		A00000110000000000000001 /* TimeLeftApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeLeftApp.swift; sourceTree = "<group>"; };
+		A00000110000000000000002 /* Preferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Preferences.swift; sourceTree = "<group>"; };
+		A00000110000000000000003 /* CountdownEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountdownEngine.swift; sourceTree = "<group>"; };
+		A00000110000000000000004 /* MenuContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuContentView.swift; sourceTree = "<group>"; };
+		A00000110000000000000005 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		A00000110000000000000009 /* SettingsWindowManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWindowManager.swift; sourceTree = "<group>"; };
+		A00000110000000000000006 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		A00000110000000000000007 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A00000110000000000000008 /* TimeLeft.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Time Left.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A00000210000000000000001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		A00000310000000000000001 = {
+			isa = PBXGroup;
+			children = (
+				A00000110000000000000001 /* TimeLeftApp.swift */,
+				A00000110000000000000002 /* Preferences.swift */,
+				A00000110000000000000003 /* CountdownEngine.swift */,
+				A00000110000000000000004 /* MenuContentView.swift */,
+				A00000110000000000000005 /* SettingsView.swift */,
+				A00000110000000000000009 /* SettingsWindowManager.swift */,
+				A00000110000000000000006 /* Assets.xcassets */,
+				A00000110000000000000007 /* Info.plist */,
+			);
+			path = TimeLeft;
+			sourceTree = "<group>";
+		};
+		A00000310000000000000002 = {
+			isa = PBXGroup;
+			children = (
+				A00000110000000000000008 /* TimeLeft.app */,
+			);
+			name = Products;
+			path = "";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A00000410000000000000001 /* Time Left */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A00000610000000000000002 /* Build configuration list for PBXNativeTarget "Time Left" */;
+			buildPhases = (
+				A00000210000000000000002 /* Sources */,
+				A00000210000000000000001 /* Frameworks */,
+				A00000210000000000000003 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Time Left";
+			productName = "Time Left";
+			productReference = A00000110000000000000008 /* TimeLeft.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A00000510000000000000001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 2660;
+				TargetAttributes = {
+					A00000410000000000000001 = {
+						CreatedOnToolsVersion = 26.6;
+					};
+				};
+			};
+			buildConfigurationList = A00000610000000000000001 /* Build configuration list for PBXProject "Time Left" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = A00000310000000000000001;
+			productRefGroup = A00000310000000000000002 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A00000410000000000000001 /* Time Left */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A00000210000000000000003 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A00000010000000000000006 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A00000210000000000000002 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A00000010000000000000001 /* TimeLeftApp.swift in Sources */,
+				A00000010000000000000002 /* Preferences.swift in Sources */,
+				A00000010000000000000003 /* CountdownEngine.swift in Sources */,
+				A00000010000000000000004 /* MenuContentView.swift in Sources */,
+				A00000010000000000000005 /* SettingsView.swift in Sources */,
+				A00000010000000000000008 /* SettingsWindowManager.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		A00000710000000000000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				INFOPLIST_FILE = TimeLeft/Info.plist;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.injisung0818.TimeLeft;
+				PRODUCT_NAME = "Time Left";
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		A00000710000000000000002 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				INFOPLIST_FILE = TimeLeft/Info.plist;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.injisung0818.TimeLeft;
+				PRODUCT_NAME = "Time Left";
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		A00000710000000000000003 /* Project Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		A00000710000000000000004 /* Project Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A00000610000000000000001 /* Build configuration list for PBXProject "Time Left" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A00000710000000000000003 /* Project Debug */,
+				A00000710000000000000004 /* Project Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A00000610000000000000002 /* Build configuration list for PBXNativeTarget "Time Left" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A00000710000000000000001 /* Debug */,
+				A00000710000000000000002 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = A00000510000000000000001 /* Project object */;
+}
