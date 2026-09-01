@@ -12,23 +12,19 @@ if [[ ! -d "$APP_PATH" ]]; then
 fi
 
 VERSION=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$APP_PATH/Contents/Info.plist")
-DMG_PATH="$OUTPUT_DIR/Time-Left-$VERSION.dmg"
-STAGING_DIR=$(mktemp -d "${TMPDIR:-/tmp}/time-left-dmg.XXXXXX")
-
-cleanup() {
-  rm -rf "$STAGING_DIR"
-}
-trap cleanup EXIT
+ARCHIVE_PATH="$OUTPUT_DIR/Time-Left-$VERSION.app.zip"
 
 mkdir -p "$OUTPUT_DIR"
-ditto "$APP_PATH" "$STAGING_DIR/Time Left.app"
-ln -s /Applications "$STAGING_DIR/Applications"
-hdiutil create \
-  -volname "Time Left" \
-  -srcfolder "$STAGING_DIR" \
-  -ov \
-  -format UDZO \
-  "$DMG_PATH"
+rm -f "$ARCHIVE_PATH"
 
-print "DMG 생성 완료: $DMG_PATH"
+# Ad-hoc signing keeps the bundle internally consistent for local test builds.
+# Public distribution should replace this with Developer ID signing and notarization.
+codesign --force --deep --sign - "$APP_PATH"
+codesign --verify --deep --strict "$APP_PATH"
+(
+  cd "${APP_PATH:h}"
+  /usr/bin/zip -q -r -X "$ARCHIVE_PATH" "${APP_PATH:t}"
+)
+
+print "앱 ZIP 생성 완료: $ARCHIVE_PATH"
 print "배포 전에는 Developer ID 서명과 Apple notarization을 적용하세요."

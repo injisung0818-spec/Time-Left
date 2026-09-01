@@ -21,16 +21,16 @@ macOS 13 이상에서 동작하는 SwiftUI 메뉴바 카운트다운 앱입니�
 
 별도의 Swift Package나 외부 라이브러리는 사용하지 않습니다. 앱 설정은 macOS의 `UserDefaults`에 저장됩니다.
 
-## DMG 배포
+## 앱 번들 배포
 
-Release 빌드한 앱을 DMG로 패키징합니다.
+GitHub Release에는 폴더인 `.app`을 직접 첨부할 수 없으므로, 앱 번들만 담은 ZIP으로 패키징합니다. 사용자는 ZIP을 풀어 나온 `Time Left.app`을 Applications 폴더로 옮겨 실행합니다.
 
 ```bash
 xcodebuild -project TimeLeft.xcodeproj -scheme 'Time Left' -configuration Release -derivedDataPath build CODE_SIGNING_ALLOWED=NO build
-./scripts/create-dmg.sh "$(pwd)/build/Build/Products/Release/Time Left.app"
+./scripts/package-app.sh "$(pwd)/build/Build/Products/Release/Time Left.app"
 ```
 
-생성된 `dist/Time-Left-<version>.dmg`를 GitHub의 **Releases** 항목에 첨부합니다. 공개 배포에서는 Developer ID로 앱을 서명하고 Hardened Runtime을 켠 뒤, DMG를 Apple notarization에 제출해 ticket을 staple해야 Gatekeeper 경고 없이 설치할 수 있습니다.
+생성된 `dist/Time-Left-<version>.app.zip`만 GitHub의 **Releases** 항목에 첨부합니다. 공개 배포에서는 Developer ID로 앱을 서명하고 Hardened Runtime을 켠 뒤, 앱 또는 ZIP을 Apple notarization에 제출해야 Gatekeeper 경고 없이 설치할 수 있습니다.
 
 ## 기본 동작
 
