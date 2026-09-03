@@ -40,6 +40,9 @@ enum CountdownEngine {
     static func targetDate(preferences: Preferences, now: Date, calendar: Calendar) -> Date? {
         switch preferences.kind {
         case .weekdayTime:
+            if preferences.activePreset == .school, preferences.repeatWeekly {
+                return schoolTarget(now: now, calendar: calendar)
+            }
             return weekdayTarget(preferences: preferences, now: now, calendar: calendar)
         case .todayTime:
             return date(on: now, time: preferences.timeOfDay, calendar: calendar)
@@ -95,6 +98,33 @@ enum CountdownEngine {
             next = calendar.date(byAdding: .day, value: 7, to: next) ?? next
         }
         return next
+    }
+
+    /// The school preset has a two-step weekly schedule:
+    /// Friday 14:20 → Sunday 21:00 → next Friday 14:20.
+    private static func schoolTarget(now: Date, calendar: Calendar) -> Date? {
+        let today = calendar.dateComponents([.year, .month, .day, .weekday], from: now)
+        guard let currentWeekday = today.weekday else { return nil }
+
+        var fridayComponents = today
+        fridayComponents.hour = 14
+        fridayComponents.minute = 20
+        fridayComponents.second = 0
+        guard let todayAtSchoolTime = calendar.date(from: fridayComponents) else { return nil }
+
+        // Find this week's Friday, including a Friday that has already passed.
+        let daysSinceFriday = (currentWeekday - 6 + 7) % 7
+        guard let thisFriday = calendar.date(byAdding: .day, value: -daysSinceFriday, to: todayAtSchoolTime),
+              let thisSunday = calendar.date(bySettingHour: 21, minute: 0, second: 0, of: calendar.date(byAdding: .day, value: 2, to: thisFriday) ?? thisFriday)
+        else { return nil }
+
+        if now < thisFriday {
+            return thisFriday
+        }
+        if now < thisSunday {
+            return thisSunday
+        }
+        return calendar.date(byAdding: .day, value: 7, to: thisFriday)
     }
 
     private static func date(on day: Date, time: Date, calendar: Calendar) -> Date? {
