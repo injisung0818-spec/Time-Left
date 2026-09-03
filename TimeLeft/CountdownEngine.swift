@@ -14,7 +14,7 @@ enum CountdownEngine {
         let target = targetDate(preferences: preferences, now: now, calendar: calendar)
         let remaining = max(0, (target ?? now).timeIntervalSince(now))
         let isComplete = target.map { now >= $0 } ?? false
-        let name = preferences.targetName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? "카운트다운" : preferences.targetName
+        let name = displayName(preferences: preferences, target: target, calendar: calendar)
         let prefix = name
 
         if isComplete {
@@ -81,6 +81,20 @@ enum CountdownEngine {
         formatter.dateStyle = .long
         formatter.timeStyle = .short
         return formatter.string(from: date)
+    }
+
+    private static func displayName(preferences: Preferences, target: Date?, calendar: Calendar) -> String {
+        let configuredName = preferences.targetName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? "카운트다운" : preferences.targetName
+        guard preferences.activePreset == .school,
+              preferences.kind == .weekdayTime,
+              preferences.repeatWeekly,
+              let target,
+              calendar.component(.weekday, from: target) == 1,
+              calendar.component(.hour, from: target) == 21,
+              calendar.component(.minute, from: target) == 0
+        else { return configuredName }
+
+        return "등교"
     }
 
     private static func weekdayTarget(preferences: Preferences, now: Date, calendar: Calendar) -> Date? {
