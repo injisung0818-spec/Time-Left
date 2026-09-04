@@ -29,6 +29,10 @@ struct SettingsView: View {
                     .foregroundStyle(.secondary)
             }
 
+            Section("앱 실행") {
+                LaunchAtLoginToggle()
+            }
+
             Section("정보") {
                 HStack {
                     Text("버전")
@@ -39,12 +43,12 @@ struct SettingsView: View {
             }
         }
         .formStyle(.grouped)
-        .frame(width: 440, height: 410)
+        .frame(width: 440, height: 460)
         .navigationTitle("Time Left 설정")
     }
 
     private var versionString: String {
-        let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "1.0.01"
+        let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "1.0.02"
         let build = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "1"
         return "\(version) (\(build))"
     }
@@ -76,6 +80,40 @@ struct SettingsView: View {
                 .foregroundStyle(.secondary)
         case .customDate:
             DatePicker("목표 날짜", selection: $preferences.selectedDate, displayedComponents: [.date, .hourAndMinute])
+        }
+    }
+}
+
+private struct LaunchAtLoginToggle: View {
+    @State private var isEnabled = LaunchAtLoginManager.isEnabled
+    @State private var errorMessage: String?
+
+    var body: some View {
+        Toggle("로그인 시 자동 실행", isOn: Binding(
+            get: { isEnabled },
+            set: { setLaunchAtLogin($0) }
+        ))
+        .onAppear { isEnabled = LaunchAtLoginManager.isEnabled }
+
+        if LaunchAtLoginManager.requiresApproval {
+            Text("시스템 설정의 로그인 항목에서 Time Left 실행을 허용하세요.")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        } else if let errorMessage {
+            Text(errorMessage)
+                .font(.caption)
+                .foregroundStyle(.red)
+        }
+    }
+
+    private func setLaunchAtLogin(_ enabled: Bool) {
+        do {
+            try LaunchAtLoginManager.setEnabled(enabled)
+            isEnabled = LaunchAtLoginManager.isEnabled
+            errorMessage = nil
+        } catch {
+            isEnabled = LaunchAtLoginManager.isEnabled
+            errorMessage = "자동 실행 설정을 변경하지 못했습니다."
         }
     }
 }

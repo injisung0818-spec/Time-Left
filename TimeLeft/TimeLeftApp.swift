@@ -9,6 +9,7 @@ struct TimeLeftApp: App {
         let preferences = Preferences()
         _preferences = StateObject(wrappedValue: preferences)
         _countdown = StateObject(wrappedValue: CountdownModel(preferences: preferences))
+        LaunchAtLoginManager.registerIfNeeded()
     }
 
     var body: some Scene {
