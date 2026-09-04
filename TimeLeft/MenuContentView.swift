@@ -3,10 +3,26 @@ import AppKit
 
 struct MenuContentView: View {
     @EnvironmentObject private var preferences: Preferences
+    @EnvironmentObject private var countdown: CountdownModel
     @EnvironmentObject private var updateChecker: GitHubReleaseChecker
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
+            VStack(alignment: .leading, spacing: 3) {
+                Text(countdown.snapshot.detailText)
+                    .font(.headline)
+                    .fixedSize(horizontal: false, vertical: true)
+                if let targetDate = countdown.snapshot.targetDate {
+                    Text(CountdownEngine.formattedTargetDate(targetDate))
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 9)
+
+            Divider()
+
             Menu {
                 ForEach(preferences.profiles) { profile in
                     Button {
