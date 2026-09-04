@@ -11,6 +11,11 @@ struct CountdownSnapshot {
 }
 
 enum CountdownEngine {
+    static func gaugeText(progress: Double, segments: Int = 8) -> String {
+        let filled = min(segments, max(0, Int((progress * Double(segments)).rounded())))
+        return String(repeating: "▰", count: filled) + String(repeating: "▱", count: segments - filled)
+    }
+
     static func snapshot(preferences: Preferences, now: Date = Date(), calendar: Calendar = .current) -> CountdownSnapshot {
         let schedule = preferences.selectedSchedule
         let target = targetDate(schedule: schedule, now: now, calendar: calendar)

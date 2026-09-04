@@ -23,9 +23,8 @@ struct TimeLeftApp: App {
                 .environmentObject(updateChecker)
         } label: {
             if preferences.menuBarDisplayStyle == .gauge {
-                ProgressView(value: countdown.snapshot.progress)
-                    .progressViewStyle(.linear)
-                    .frame(width: 56)
+                Text(CountdownEngine.gaugeText(progress: countdown.snapshot.progress))
+                    .font(.system(size: 12, weight: .medium, design: .monospaced))
                     .accessibilityLabel("목표까지 진행률")
                     .accessibilityValue("\(Int(countdown.snapshot.progress * 100))%")
             } else {
