@@ -32,9 +32,15 @@ enum DisplayUnit: String, CaseIterable, Identifiable {
 }
 
 enum MenuBarDisplayStyle: String, CaseIterable, Identifiable {
-    case time, gauge
+    case compact, digital, icon
     var id: String { rawValue }
-    var title: String { self == .time ? "남은 시간" : "진행 게이지" }
+    var title: String {
+        switch self {
+        case .compact: return "2h 10m 형식"
+        case .digital: return "02:10:00 형식"
+        case .icon: return "아이콘만"
+        }
+    }
 }
 
 struct CountdownSchedule: Identifiable, Codable, Equatable {
@@ -86,7 +92,8 @@ final class Preferences: ObservableObject {
         let savedID = defaults.string(forKey: "selectedScheduleID").flatMap(UUID.init(uuidString:))
         selectedScheduleID = loadedSchedules.contains(where: { $0.id == savedID }) ? savedID! : loadedSchedules[0].id
         displayUnit = DisplayUnit(rawValue: defaults.string(forKey: "displayUnit") ?? "automatic") ?? .automatic
-        menuBarDisplayStyle = MenuBarDisplayStyle(rawValue: defaults.string(forKey: "menuBarDisplayStyle") ?? "time") ?? .time
+        // Older saved values (time/gauge) migrate to the compact text display.
+        menuBarDisplayStyle = MenuBarDisplayStyle(rawValue: defaults.string(forKey: "menuBarDisplayStyle") ?? "compact") ?? .compact
         save()
     }
 

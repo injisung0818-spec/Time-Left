@@ -1,4 +1,5 @@
 import SwiftUI
+import AppKit
 
 @main
 struct TimeLeftApp: App {
@@ -22,14 +23,19 @@ struct TimeLeftApp: App {
                 .environmentObject(countdown)
                 .environmentObject(updateChecker)
         } label: {
-            if preferences.menuBarDisplayStyle == .gauge {
-                Text(CountdownEngine.gaugeText(progress: countdown.snapshot.progress))
-                    .font(.system(size: 12, weight: .medium, design: .monospaced))
-                    .accessibilityLabel("목표까지 진행률")
-                    .accessibilityValue("\(Int(countdown.snapshot.progress * 100))%")
-            } else {
-                Text(countdown.snapshot.menuBarText)
+            switch preferences.menuBarDisplayStyle {
+            case .compact:
+                Text(CountdownEngine.compactMenuBarText(countdown.snapshot.remaining))
                     .monospacedDigit()
+            case .digital:
+                Text(CountdownEngine.digitalMenuBarText(countdown.snapshot.remaining))
+                    .monospacedDigit()
+            case .icon:
+                Image(nsImage: NSApp.applicationIconImage)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 18, height: 18)
+                    .accessibilityLabel("Time Left")
             }
         }
         .menuBarExtraStyle(.menu)

@@ -4,23 +4,35 @@ import Combine
 struct CountdownSnapshot {
     let targetDate: Date?
     let remaining: TimeInterval
-    let progress: Double
     let isComplete: Bool
-    let menuBarText: String
     let detailText: String
 }
 
 enum CountdownEngine {
-    static func gaugeText(progress: Double, segments: Int = 8) -> String {
-        let filled = min(segments, max(0, Int((progress * Double(segments)).rounded())))
-        return String(repeating: "▰", count: filled) + String(repeating: "▱", count: segments - filled)
+    static func compactMenuBarText(_ duration: TimeInterval) -> String {
+        let totalMinutes = max(0, Int(duration / 60))
+        let weeks = totalMinutes / 10_080
+        let days = (totalMinutes % 10_080) / 1_440
+        let hours = (totalMinutes % 1_440) / 60
+        let minutes = totalMinutes % 60
+        let values = [(weeks, "w"), (days, "d"), (hours, "h"), (minutes, "m")]
+            .filter { $0.0 > 0 }
+        if values.isEmpty { return "0m" }
+        return values.prefix(2).map { "\($0.0)\($0.1)" }.joined(separator: " ")
+    }
+
+    static func digitalMenuBarText(_ duration: TimeInterval) -> String {
+        let seconds = max(0, Int(duration.rounded(.down)))
+        let hours = seconds / 3_600
+        let minutes = (seconds % 3_600) / 60
+        let remainder = seconds % 60
+        return String(format: "%02d:%02d:%02d", hours, minutes, remainder)
     }
 
     static func snapshot(preferences: Preferences, now: Date = Date(), calendar: Calendar = .current) -> CountdownSnapshot {
         let schedule = preferences.selectedSchedule
         let target = targetDate(schedule: schedule, now: now, calendar: calendar)
         let remaining = max(0, (target ?? now).timeIntervalSince(now))
-        let progress = progressValue(schedule: schedule, target: target, now: now, calendar: calendar)
         let isComplete = target.map { now >= $0 } ?? false
         let name = displayName(schedule: schedule, target: target, calendar: calendar)
         let prefix = name
@@ -29,9 +41,7 @@ enum CountdownEngine {
             return CountdownSnapshot(
                 targetDate: target,
                 remaining: 0,
-                progress: 1,
                 isComplete: true,
-                menuBarText: "완료",
                 detailText: "\(prefix) 목표가 완료되었습니다. 설정에서 새 목표를 지정할 수 있습니다."
             )
         }
@@ -40,9 +50,7 @@ enum CountdownEngine {
         return CountdownSnapshot(
             targetDate: target,
             remaining: remaining,
-            progress: progress,
             isComplete: false,
-            menuBarText: duration,
             detailText: "\(prefix)까지 \(duration) 남았습니다."
         )
     }
@@ -91,42 +99,6 @@ enum CountdownEngine {
         formatter.dateStyle = .long
         formatter.timeStyle = .short
         return formatter.string(from: date)
-    }
-
-    private static func progressValue(schedule: CountdownSchedule, target: Date?, now: Date, calendar: Calendar) -> Double {
-        guard let target else { return 0 }
-        let start: Date?
-
-        switch schedule.kind {
-        case .weekdayTime where schedule.repeatWeekly:
-            if schedule.usesSchoolCycle {
-                start = schoolCycleStart(target: target, calendar: calendar)
-            } else {
-                start = calendar.date(byAdding: .day, value: -7, to: target)
-            }
-        case .yearEnd:
-            let year = calendar.component(.year, from: target) - 1
-            start = calendar.date(from: DateComponents(year: year, month: 1, day: 1))
-        default:
-            // One-time dates have no previous cycle. Their bar begins when the app starts tracking them.
-            start = nil
-        }
-
-        guard let start else { return 0 }
-        let duration = target.timeIntervalSince(start)
-        guard duration > 0 else { return 0 }
-        return min(1, max(0, now.timeIntervalSince(start) / duration))
-    }
-
-    private static func schoolCycleStart(target: Date, calendar: Calendar) -> Date? {
-        let weekday = calendar.component(.weekday, from: target)
-        let hour = calendar.component(.hour, from: target)
-
-        // Sunday 21:00 follows that Friday's 14:20. Friday 14:20 follows the prior Sunday 21:00.
-        if weekday == 1 && hour == 21 {
-            return calendar.date(byAdding: .day, value: -2, to: target)
-        }
-        return calendar.date(byAdding: .day, value: -5, to: target)
     }
 
     private static func displayName(schedule: CountdownSchedule, target: Date?, calendar: Calendar) -> String {
