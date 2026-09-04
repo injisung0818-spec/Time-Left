@@ -102,6 +102,9 @@ struct SettingsView: View {
             }
 
             Section("표시") {
+                Picker("앱 모드", selection: $preferences.appAppearance) {
+                    ForEach(AppAppearance.allCases) { appearance in Text(appearance.title).tag(appearance) }
+                }
                 Picker("메뉴 막대 표시", selection: $preferences.menuBarDisplayStyle) {
                     ForEach(MenuBarDisplayStyle.allCases) { style in Text(style.title).tag(style) }
                 }
@@ -129,6 +132,9 @@ struct SettingsView: View {
         .frame(width: 540, height: 680)
         .navigationTitle("Time Left 설정")
         .onAppear { updateChecker.checkForLatestRelease() }
+        .onChange(of: preferences.appAppearance) { appearance in
+            AppearanceManager.shared.apply(appearance)
+        }
         .onReceive(NotificationCenter.default.publisher(for: .timeLeftAddSchedule)) { _ in
             isAddingSchedule = true
         }

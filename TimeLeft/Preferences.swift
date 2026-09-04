@@ -44,6 +44,18 @@ enum MenuBarDisplayStyle: String, CaseIterable, Identifiable {
     }
 }
 
+enum AppAppearance: String, CaseIterable, Identifiable {
+    case system, light, dark
+    var id: String { rawValue }
+    var title: String {
+        switch self {
+        case .system: return "시스템 설정"
+        case .light: return "라이트 모드"
+        case .dark: return "다크 모드"
+        }
+    }
+}
+
 struct CountdownGroup: Identifiable, Codable, Equatable {
     var id: UUID
     var name: String
@@ -111,6 +123,7 @@ final class Preferences: ObservableObject {
     @Published private(set) var selectedScheduleID: UUID?
     @Published var displayUnit: DisplayUnit { didSet { save() } }
     @Published var menuBarDisplayStyle: MenuBarDisplayStyle { didSet { save() } }
+    @Published var appAppearance: AppAppearance { didSet { save() } }
 
     init(migrateLegacyData: Bool = true) {
         let sharedDefaults = UserDefaults(suiteName: Self.appGroupID) ?? .standard
@@ -141,6 +154,7 @@ final class Preferences: ObservableObject {
 
         displayUnit = DisplayUnit(rawValue: sharedDefaults.string(forKey: "displayUnit") ?? legacyDefaults.string(forKey: "displayUnit") ?? "automatic") ?? .automatic
         menuBarDisplayStyle = MenuBarDisplayStyle(rawValue: sharedDefaults.string(forKey: "menuBarDisplayStyle") ?? legacyDefaults.string(forKey: "menuBarDisplayStyle") ?? "compact") ?? .compact
+        appAppearance = AppAppearance(rawValue: sharedDefaults.string(forKey: "appAppearance") ?? legacyDefaults.string(forKey: "appAppearance") ?? "system") ?? .system
         if migrateLegacyData { save(reloadWidgets: false) }
     }
 
@@ -295,6 +309,7 @@ final class Preferences: ObservableObject {
         defaults.set(selectedScheduleID?.uuidString, forKey: "selectedScheduleID")
         defaults.set(displayUnit.rawValue, forKey: "displayUnit")
         defaults.set(menuBarDisplayStyle.rawValue, forKey: "menuBarDisplayStyle")
+        defaults.set(appAppearance.rawValue, forKey: "appAppearance")
         if reloadWidgets { WidgetCenter.shared.reloadAllTimelines() }
     }
 }

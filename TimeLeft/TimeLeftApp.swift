@@ -1,5 +1,19 @@
 import SwiftUI
 import WidgetKit
+import AppKit
+
+@MainActor
+final class AppearanceManager {
+    static let shared = AppearanceManager()
+
+    func apply(_ appearance: AppAppearance) {
+        switch appearance {
+        case .system: NSApp.appearance = nil
+        case .light: NSApp.appearance = NSAppearance(named: .aqua)
+        case .dark: NSApp.appearance = NSAppearance(named: .darkAqua)
+        }
+    }
+}
 
 @main
 struct TimeLeftApp: App {
@@ -14,6 +28,7 @@ struct TimeLeftApp: App {
         _countdown = StateObject(wrappedValue: CountdownModel(preferences: preferences))
         _updateChecker = StateObject(wrappedValue: updateChecker)
         LaunchAtLoginManager.registerIfNeeded()
+        AppearanceManager.shared.apply(preferences.appAppearance)
         WidgetCenter.shared.reloadTimelines(ofKind: "TimeLeftWidget")
     }
 
