@@ -1,5 +1,4 @@
 import SwiftUI
-import AppKit
 
 @main
 struct TimeLeftApp: App {
@@ -31,10 +30,7 @@ struct TimeLeftApp: App {
                 Text(CountdownEngine.digitalMenuBarText(countdown.snapshot.remaining))
                     .monospacedDigit()
             case .icon:
-                Image(nsImage: NSApp.applicationIconImage)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 18, height: 18)
+                Image(systemName: "clock")
                     .accessibilityLabel("Time Left")
             }
         }
