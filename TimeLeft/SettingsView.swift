@@ -19,12 +19,20 @@ struct SettingsView: View {
             }
 
             Section("표시") {
+                Picker("메뉴 막대 표시", selection: $preferences.menuBarDisplayStyle) {
+                    ForEach(MenuBarDisplayStyle.allCases) { style in
+                        Text(style.title).tag(style)
+                    }
+                }
                 Picker("표시 단위", selection: $preferences.displayUnit) {
                     ForEach(DisplayUnit.allCases) { unit in
                         Text(unit.title).tag(unit)
                     }
                 }
                 Text("자동 모드는 남은 시간의 크기에 맞춰 읽기 쉬운 단위를 선택합니다.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                Text("진행 게이지는 다음 목표 시각에 가까워질수록 채워집니다.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }

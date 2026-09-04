@@ -5,6 +5,9 @@ PROJECT_ROOT="${0:A:h:h}"
 APP_PATH="${1:-$PROJECT_ROOT/build/Release/Time Left.app}"
 OUTPUT_DIR="${2:-$PROJECT_ROOT/dist}"
 
+APP_PATH="${APP_PATH:A}"
+OUTPUT_DIR="${OUTPUT_DIR:A}"
+
 if [[ ! -d "$APP_PATH" ]]; then
   print -u2 "앱 번들을 찾을 수 없습니다: $APP_PATH"
   print -u2 "사용법: $0 '/경로/Time Left.app' [출력_폴더]"

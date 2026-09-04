@@ -18,8 +18,16 @@ struct TimeLeftApp: App {
                 .environmentObject(preferences)
                 .environmentObject(countdown)
         } label: {
-            Text(countdown.snapshot.menuBarText)
-                .monospacedDigit()
+            if preferences.menuBarDisplayStyle == .gauge {
+                ProgressView(value: countdown.snapshot.progress)
+                    .progressViewStyle(.linear)
+                    .frame(width: 56)
+                    .accessibilityLabel("목표까지 진행률")
+                    .accessibilityValue("\(Int(countdown.snapshot.progress * 100))%")
+            } else {
+                Text(countdown.snapshot.menuBarText)
+                    .monospacedDigit()
+            }
         }
         .menuBarExtraStyle(.menu)
 

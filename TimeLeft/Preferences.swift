@@ -45,6 +45,20 @@ enum DisplayUnit: String, CaseIterable, Identifiable {
     }
 }
 
+enum MenuBarDisplayStyle: String, CaseIterable, Identifiable {
+    case time
+    case gauge
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .time: return "남은 시간"
+        case .gauge: return "진행 게이지"
+        }
+    }
+}
+
 enum QuickPreset: String, CaseIterable, Identifiable {
     case school
     case year
@@ -73,6 +87,7 @@ final class Preferences: ObservableObject {
     @Published var repeatWeekly: Bool { didSet { markAsCustom(); save() } }
     @Published var selectedDate: Date { didSet { markAsCustom(); save() } }
     @Published var displayUnit: DisplayUnit { didSet { save() } }
+    @Published var menuBarDisplayStyle: MenuBarDisplayStyle { didSet { save() } }
     @Published var activePreset: QuickPreset { didSet { save() } }
 
     init() {
@@ -86,6 +101,7 @@ final class Preferences: ObservableObject {
         repeatWeekly = defaults.object(forKey: "repeatWeekly") as? Bool ?? true
         selectedDate = defaults.object(forKey: "selectedDate") as? Date ?? defaultDate
         displayUnit = DisplayUnit(rawValue: defaults.string(forKey: "displayUnit") ?? "automatic") ?? .automatic
+        menuBarDisplayStyle = MenuBarDisplayStyle(rawValue: defaults.string(forKey: "menuBarDisplayStyle") ?? "time") ?? .time
         activePreset = QuickPreset(rawValue: defaults.string(forKey: "activePreset") ?? "school") ?? .school
         isLoading = false
     }
@@ -125,6 +141,7 @@ final class Preferences: ObservableObject {
         defaults.set(repeatWeekly, forKey: "repeatWeekly")
         defaults.set(selectedDate, forKey: "selectedDate")
         defaults.set(displayUnit.rawValue, forKey: "displayUnit")
+        defaults.set(menuBarDisplayStyle.rawValue, forKey: "menuBarDisplayStyle")
         defaults.set(activePreset.rawValue, forKey: "activePreset")
     }
 }
