@@ -1,4 +1,5 @@
 import SwiftUI
+import WidgetKit
 
 @main
 struct TimeLeftApp: App {
@@ -13,6 +14,7 @@ struct TimeLeftApp: App {
         _countdown = StateObject(wrappedValue: CountdownModel(preferences: preferences))
         _updateChecker = StateObject(wrappedValue: updateChecker)
         LaunchAtLoginManager.registerIfNeeded()
+        WidgetCenter.shared.reloadTimelines(ofKind: "TimeLeftWidget")
     }
 
     var body: some Scene {
