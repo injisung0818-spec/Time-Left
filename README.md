@@ -40,6 +40,10 @@ xcodebuild -project TimeLeft.xcodeproj -scheme 'Time Left' -configuration Releas
 
 생성된 `dist/Time-Left-<version>.app.zip`만 GitHub의 **Releases** 항목에 첨부합니다. 공개 배포에서는 Developer ID로 앱을 서명하고 Hardened Runtime을 켠 뒤, 앱 또는 ZIP을 Apple notarization에 제출해야 Gatekeeper 경고 없이 설치할 수 있습니다.
 
+## 버전 규칙
+
+버전은 `메이저.마이너.패치` 형식을 사용합니다. 버그·문구·색상·오류 수정은 패치 버전을, 새 기능은 마이너 버전을, 앱 구조나 사용 방식이 크게 바뀌는 변경은 메이저 버전을 올립니다. 마이너와 패치는 한 자리로 제한하지 않습니다(예: `1.10.0`).
+
 ## 기본 동작
 
 처음 실행하면 하교 프리셋이 적용됩니다. 금요일 14:20 전에는 해당 시각을 목표로 표시하고, 그 시간이 지나면 일요일 21:00까지로 자동 전환합니다. 일요일 21:00이 지나면 다음 주 금요일 14:20을 목표로 돌아갑니다. 이 특수 규칙은 하교 프리셋에만 적용되며, 사용자 지정 반복 목표는 기존 주간 반복 방식으로 동작합니다.
