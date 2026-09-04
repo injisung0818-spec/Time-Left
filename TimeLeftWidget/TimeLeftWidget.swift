@@ -66,7 +66,7 @@ struct TimeLeftWidgetView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
             Text("Time Left")
-                .font(.caption.bold())
+                .font(.system(size: 15, weight: .bold))
                 .foregroundStyle(.secondary)
 
             if entry.schedules.isEmpty {
@@ -87,7 +87,7 @@ struct TimeLeftWidgetView: View {
                             .monospacedDigit()
                             .fixedSize()
                     }
-                    .font(.caption)
+                    .font(.system(size: 14))
                     .fontWeight(schedule.isSelected ? .bold : .regular)
                     .foregroundStyle(schedule.isSelected ? Color.accentColor : Color.primary)
                 }
