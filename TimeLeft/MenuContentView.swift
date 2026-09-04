@@ -3,54 +3,64 @@ import AppKit
 
 struct MenuContentView: View {
     @EnvironmentObject private var preferences: Preferences
-    @EnvironmentObject private var countdown: CountdownModel
     @EnvironmentObject private var updateChecker: GitHubReleaseChecker
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            HStack {
-                Text("프로필")
+            Menu {
+                ForEach(preferences.profiles) { profile in
+                    Button {
+                        preferences.selectProfile(profile)
+                    } label: {
+                        if preferences.selectedProfileID == profile.id {
+                            Label(profile.name, systemImage: "checkmark")
+                        } else {
+                            Text(profile.name)
+                        }
+                    }
+                }
+            } label: {
+                Label("프로필 · \(preferences.selectedProfile.name)", systemImage: "person.crop.circle")
+            }
+            .menuStyle(.borderlessButton)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 7)
+
+            Divider()
+
+            Text("기타")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .padding(.horizontal, 12)
+                .padding(.top, 7)
+                .padding(.bottom, 2)
+
+            if otherSchedules.isEmpty {
+                Text("전환할 일정이 없습니다.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
-                Spacer()
-                Menu {
-                    ForEach(preferences.profiles) { profile in
-                        Button {
-                            preferences.selectProfile(profile)
-                        } label: {
-                            if preferences.selectedProfileID == profile.id {
-                                Label(profile.name, systemImage: "checkmark")
-                            } else {
-                                Text(profile.name)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 5)
+            } else {
+                ForEach(otherSchedules) { schedule in
+                    Button {
+                        preferences.selectSchedule(schedule)
+                    } label: {
+                        HStack {
+                            Text(currentName(for: schedule))
+                                .fontWeight(preferences.selectedScheduleID == schedule.id ? .semibold : .regular)
+                            Spacer()
+                            if preferences.selectedScheduleID == schedule.id {
+                                Image(systemName: "checkmark.circle.fill")
+                                    .foregroundStyle(.tint)
                             }
                         }
                     }
-                } label: {
-                    HStack(spacing: 4) {
-                        Text(preferences.selectedProfile.name)
-                            .lineLimit(1)
-                        Image(systemName: "chevron.up.chevron.down")
-                            .font(.caption)
-                    }
-                }
-                .menuStyle(.borderlessButton)
-            }
-            .padding(.horizontal, 12)
-            .padding(.top, 9)
-            .padding(.bottom, 6)
-
-            VStack(alignment: .leading, spacing: 5) {
-                Text(countdown.snapshot.detailText)
-                    .font(.headline)
-                    .fixedSize(horizontal: false, vertical: true)
-                if let targetDate = countdown.snapshot.targetDate {
-                    Text(CountdownEngine.formattedTargetDate(targetDate))
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                    .buttonStyle(.borderless)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 4)
                 }
             }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 8)
 
             Divider()
 
@@ -71,5 +81,14 @@ struct MenuContentView: View {
             .padding(.bottom, 8)
         }
         .frame(width: 310)
+    }
+
+    private var otherSchedules: [CountdownSchedule] {
+        preferences.scheduleSections().first(where: { $0.id == "other" })?.schedules ?? []
+    }
+
+    private func currentName(for schedule: CountdownSchedule) -> String {
+        let target = CountdownEngine.targetDate(schedule: schedule, now: Date(), calendar: .current)
+        return CountdownEngine.displayName(schedule: schedule, target: target, calendar: .current)
     }
 }
