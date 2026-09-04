@@ -25,7 +25,7 @@ struct TimeLeftApp: App {
         } label: {
             switch preferences.menuBarDisplayStyle {
             case .compact:
-                Text(CountdownEngine.compactMenuBarText(countdown.snapshot.remaining))
+                Text(CountdownEngine.formatDuration(countdown.snapshot.remaining, unit: preferences.displayUnit))
                     .monospacedDigit()
             case .digital:
                 Text(CountdownEngine.digitalMenuBarText(countdown.snapshot.remaining))

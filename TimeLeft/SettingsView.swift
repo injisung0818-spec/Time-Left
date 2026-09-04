@@ -48,8 +48,10 @@ struct SettingsView: View {
                 Picker("메뉴 막대 표시", selection: $preferences.menuBarDisplayStyle) {
                     ForEach(MenuBarDisplayStyle.allCases) { style in Text(style.title).tag(style) }
                 }
-                Picker("표시 단위", selection: $preferences.displayUnit) {
-                    ForEach(DisplayUnit.allCases) { unit in Text(unit.title).tag(unit) }
+                if preferences.menuBarDisplayStyle == .compact {
+                    Picker("표시 단위", selection: $preferences.displayUnit) {
+                        ForEach(DisplayUnit.allCases) { unit in Text(unit.title).tag(unit) }
+                    }
                 }
             }
 

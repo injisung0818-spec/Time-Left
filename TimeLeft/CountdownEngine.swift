@@ -9,18 +9,6 @@ struct CountdownSnapshot {
 }
 
 enum CountdownEngine {
-    static func compactMenuBarText(_ duration: TimeInterval) -> String {
-        let totalMinutes = max(0, Int(duration / 60))
-        let weeks = totalMinutes / 10_080
-        let days = (totalMinutes % 10_080) / 1_440
-        let hours = (totalMinutes % 1_440) / 60
-        let minutes = totalMinutes % 60
-        let values = [(weeks, "w"), (days, "d"), (hours, "h"), (minutes, "m")]
-            .filter { $0.0 > 0 }
-        if values.isEmpty { return "0m" }
-        return values.prefix(2).map { "\($0.0)\($0.1)" }.joined(separator: " ")
-    }
-
     static func digitalMenuBarText(_ duration: TimeInterval) -> String {
         let seconds = max(0, Int(duration.rounded(.down)))
         let hours = seconds / 3_600

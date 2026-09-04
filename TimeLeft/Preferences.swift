@@ -36,8 +36,8 @@ enum MenuBarDisplayStyle: String, CaseIterable, Identifiable {
     var id: String { rawValue }
     var title: String {
         switch self {
-        case .compact: return "2h 10m 형식"
-        case .digital: return "02:10:00 형식"
+        case .compact: return "기본"
+        case .digital: return "00:00:00 형식"
         case .icon: return "아이콘만"
         }
     }
