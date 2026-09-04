@@ -30,7 +30,14 @@ enum CountdownEngine {
     }
 
     static func snapshot(preferences: Preferences, now: Date = Date(), calendar: Calendar = .current) -> CountdownSnapshot {
-        let schedule = preferences.selectedSchedule
+        guard let schedule = preferences.selectedSchedule else {
+            return CountdownSnapshot(
+                targetDate: nil,
+                remaining: 0,
+                isComplete: false,
+                detailText: "선택된 일정이 없습니다. + 버튼으로 새 일정을 추가하세요."
+            )
+        }
         let target = targetDate(schedule: schedule, now: now, calendar: calendar)
         let remaining = max(0, (target ?? now).timeIntervalSince(now))
         let isComplete = target.map { now >= $0 } ?? false
