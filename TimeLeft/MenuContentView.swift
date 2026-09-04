@@ -105,6 +105,26 @@ struct MenuContentView: View {
 
             Divider()
 
+            Menu {
+                ForEach(AppAppearance.allCases) { appearance in
+                    Button {
+                        preferences.appAppearance = appearance
+                        AppearanceManager.shared.apply(appearance)
+                    } label: {
+                        if preferences.appAppearance == appearance {
+                            Label(appearance.title, systemImage: "checkmark")
+                        } else {
+                            Text(appearance.title)
+                        }
+                    }
+                }
+            } label: {
+                Label("앱 모드", systemImage: "circle.lefthalf.filled")
+            }
+            .menuStyle(.borderlessButton)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 7)
+
             Button {
                 SettingsWindowManager.shared.show(preferences: preferences, updateChecker: updateChecker)
             } label: {
