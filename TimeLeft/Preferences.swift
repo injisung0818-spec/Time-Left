@@ -1,5 +1,6 @@
 import Foundation
 import Combine
+import WidgetKit
 
 enum CountdownKind: String, CaseIterable, Identifiable, Codable {
     case weekdayTime, todayTime, specificDate, yearEnd, customDate
@@ -73,28 +74,37 @@ struct CountdownSchedule: Identifiable, Codable, Equatable {
 }
 
 final class Preferences: ObservableObject {
-    private let defaults = UserDefaults.standard
+    static let appGroupID = "group.com.injisung0818.TimeLeft"
+    private let defaults: UserDefaults
 
     @Published private(set) var schedules: [CountdownSchedule]
     @Published private(set) var selectedScheduleID: UUID
     @Published var displayUnit: DisplayUnit { didSet { save() } }
     @Published var menuBarDisplayStyle: MenuBarDisplayStyle { didSet { save() } }
 
-    init() {
+    init(migrateLegacyData: Bool = true) {
+        let sharedDefaults = UserDefaults(suiteName: Self.appGroupID) ?? .standard
+        let legacyDefaults = UserDefaults.standard
+        defaults = sharedDefaults
         let loadedSchedules: [CountdownSchedule]
-        if let data = defaults.data(forKey: "schedules"),
+        if let data = sharedDefaults.data(forKey: "schedules"),
            let savedSchedules = try? JSONDecoder().decode([CountdownSchedule].self, from: data), !savedSchedules.isEmpty {
             loadedSchedules = savedSchedules
+        } else if migrateLegacyData {
+            loadedSchedules = Self.migratedSchedules(defaults: legacyDefaults)
         } else {
-            loadedSchedules = Self.migratedSchedules(defaults: defaults)
+            loadedSchedules = [CountdownSchedule.school(), CountdownSchedule.schoolArrival()]
         }
         schedules = loadedSchedules
-        let savedID = defaults.string(forKey: "selectedScheduleID").flatMap(UUID.init(uuidString:))
+        let savedID = (sharedDefaults.string(forKey: "selectedScheduleID") ?? legacyDefaults.string(forKey: "selectedScheduleID"))
+            .flatMap(UUID.init(uuidString:))
         selectedScheduleID = loadedSchedules.contains(where: { $0.id == savedID }) ? savedID! : loadedSchedules[0].id
-        displayUnit = DisplayUnit(rawValue: defaults.string(forKey: "displayUnit") ?? "automatic") ?? .automatic
+        displayUnit = DisplayUnit(rawValue: sharedDefaults.string(forKey: "displayUnit") ?? legacyDefaults.string(forKey: "displayUnit") ?? "automatic") ?? .automatic
         // Older saved values (time/gauge) migrate to the compact text display.
-        menuBarDisplayStyle = MenuBarDisplayStyle(rawValue: defaults.string(forKey: "menuBarDisplayStyle") ?? "compact") ?? .compact
-        save()
+        menuBarDisplayStyle = MenuBarDisplayStyle(rawValue: sharedDefaults.string(forKey: "menuBarDisplayStyle") ?? legacyDefaults.string(forKey: "menuBarDisplayStyle") ?? "compact") ?? .compact
+        if migrateLegacyData {
+            save(reloadWidgets: false)
+        }
     }
 
     var selectedSchedule: CountdownSchedule { schedules.first(where: { $0.id == selectedScheduleID }) ?? schedules[0] }
@@ -127,10 +137,13 @@ final class Preferences: ObservableObject {
         return values
     }
 
-    private func save() {
+    private func save(reloadWidgets: Bool = true) {
         defaults.set(try? JSONEncoder().encode(schedules), forKey: "schedules")
         defaults.set(selectedScheduleID.uuidString, forKey: "selectedScheduleID")
         defaults.set(displayUnit.rawValue, forKey: "displayUnit")
         defaults.set(menuBarDisplayStyle.rawValue, forKey: "menuBarDisplayStyle")
+        if reloadWidgets {
+            WidgetCenter.shared.reloadAllTimelines()
+        }
     }
 }

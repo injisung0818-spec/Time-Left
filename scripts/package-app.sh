@@ -20,9 +20,13 @@ ARCHIVE_PATH="$OUTPUT_DIR/Time-Left-$VERSION.app.zip"
 mkdir -p "$OUTPUT_DIR"
 rm -f "$ARCHIVE_PATH"
 
-# Ad-hoc signing keeps the bundle internally consistent for local test builds.
+# Ad-hoc signing keeps the bundle and app-group entitlements intact for local test builds.
 # Public distribution should replace this with Developer ID signing and notarization.
-codesign --force --deep --sign - "$APP_PATH"
+WIDGET_PATH="$APP_PATH/Contents/PlugIns/Time Left Widget.appex"
+if [[ -d "$WIDGET_PATH" ]]; then
+  codesign --force --sign - --entitlements "$PROJECT_ROOT/TimeLeftWidget/TimeLeftWidget.entitlements" "$WIDGET_PATH"
+fi
+codesign --force --sign - --entitlements "$PROJECT_ROOT/TimeLeft/TimeLeft.entitlements" "$APP_PATH"
 codesign --verify --deep --strict "$APP_PATH"
 (
   cd "${APP_PATH:h}"

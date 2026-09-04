@@ -17,7 +17,35 @@
 		A00000010000000000000010 /* GitHubReleaseChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000110000000000000011 /* GitHubReleaseChecker.swift */; };
 		A00000010000000000000006 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A00000110000000000000006 /* Assets.xcassets */; };
 		A00000010000000000000007 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A00000110000000000000007 /* Info.plist */; };
+		B00000010000000000000001 /* TimeLeftWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000110000000000000001 /* TimeLeftWidget.swift */; };
+		B00000010000000000000002 /* Preferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000110000000000000002 /* Preferences.swift */; };
+		B00000010000000000000003 /* CountdownEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000110000000000000003 /* CountdownEngine.swift */; };
+		B00000010000000000000004 /* Time Left Widget.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = B00000110000000000000004 /* Time Left Widget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		B00000810000000000000001 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A00000510000000000000001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B00000410000000000000001;
+			remoteInfo = "Time Left Widget";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		B00000210000000000000004 /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				B00000010000000000000004 /* Time Left Widget.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		A00000110000000000000001 /* TimeLeftApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeLeftApp.swift; sourceTree = "<group>"; };
@@ -31,6 +59,11 @@
 		A00000110000000000000006 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A00000110000000000000007 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A00000110000000000000008 /* TimeLeft.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Time Left.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B00000110000000000000001 /* TimeLeftWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeLeftWidget.swift; sourceTree = "<group>"; };
+		B00000110000000000000002 /* Widget Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B00000110000000000000003 /* TimeLeftWidget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TimeLeftWidget.entitlements; sourceTree = "<group>"; };
+		B00000110000000000000004 /* Time Left Widget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Time Left Widget.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B00000110000000000000005 /* TimeLeft.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TimeLeft.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -41,9 +74,25 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B00000210000000000000001 /* Widget Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		C00000310000000000000001 = {
+			isa = PBXGroup;
+			children = (
+				A00000310000000000000001 /* TimeLeft */,
+				B00000310000000000000001 /* TimeLeftWidget */,
+				A00000310000000000000002 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
 		A00000310000000000000001 = {
 			isa = PBXGroup;
 			children = (
@@ -57,6 +106,7 @@
 				A00000110000000000000011 /* GitHubReleaseChecker.swift */,
 				A00000110000000000000006 /* Assets.xcassets */,
 				A00000110000000000000007 /* Info.plist */,
+				B00000110000000000000005 /* TimeLeft.entitlements */,
 			);
 			path = TimeLeft;
 			sourceTree = "<group>";
@@ -65,9 +115,20 @@
 			isa = PBXGroup;
 			children = (
 				A00000110000000000000008 /* TimeLeft.app */,
+				B00000110000000000000004 /* Time Left Widget.appex */,
 			);
 			name = Products;
 			path = "";
+			sourceTree = "<group>";
+		};
+		B00000310000000000000001 /* TimeLeftWidget */ = {
+			isa = PBXGroup;
+			children = (
+				B00000110000000000000001 /* TimeLeftWidget.swift */,
+				B00000110000000000000002 /* Widget Info.plist */,
+				B00000110000000000000003 /* TimeLeftWidget.entitlements */,
+			);
+			path = TimeLeftWidget;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -80,15 +141,34 @@
 				A00000210000000000000002 /* Sources */,
 				A00000210000000000000001 /* Frameworks */,
 				A00000210000000000000003 /* Resources */,
+				B00000210000000000000004 /* Embed App Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				B00000910000000000000001 /* PBXTargetDependency */,
 			);
 			name = "Time Left";
 			productName = "Time Left";
 			productReference = A00000110000000000000008 /* TimeLeft.app */;
 			productType = "com.apple.product-type.application";
+		};
+		B00000410000000000000001 /* Time Left Widget */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B00000610000000000000001 /* Build configuration list for PBXNativeTarget "Time Left Widget" */;
+			buildPhases = (
+				B00000210000000000000002 /* Widget Sources */,
+				B00000210000000000000001 /* Widget Frameworks */,
+				B00000210000000000000003 /* Widget Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Time Left Widget";
+			productName = "Time Left Widget";
+			productReference = B00000110000000000000004 /* Time Left Widget.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -101,6 +181,9 @@
 					A00000410000000000000001 = {
 						CreatedOnToolsVersion = 26.6;
 					};
+					B00000410000000000000001 = {
+						CreatedOnToolsVersion = 26.6;
+					};
 				};
 			};
 			buildConfigurationList = A00000610000000000000001 /* Build configuration list for PBXProject "Time Left" */;
@@ -111,12 +194,13 @@
 				en,
 				Base,
 			);
-			mainGroup = A00000310000000000000001;
+			mainGroup = C00000310000000000000001;
 			productRefGroup = A00000310000000000000002 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
 				A00000410000000000000001 /* Time Left */,
+				B00000410000000000000001 /* Time Left Widget */,
 			);
 		};
 /* End PBXProject section */
@@ -127,6 +211,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				A00000010000000000000006 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B00000210000000000000003 /* Widget Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -148,7 +239,25 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B00000210000000000000002 /* Widget Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B00000010000000000000001 /* TimeLeftWidget.swift in Sources */,
+				B00000010000000000000002 /* Preferences.swift in Sources */,
+				B00000010000000000000003 /* CountdownEngine.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		B00000910000000000000001 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B00000410000000000000001 /* Time Left Widget */;
+			targetProxy = B00000810000000000000001 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		A00000710000000000000001 /* Debug */ = {
@@ -157,8 +266,9 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = TimeLeft/TimeLeft.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_TEAM = "";
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				INFOPLIST_FILE = TimeLeft/Info.plist;
@@ -176,8 +286,9 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = TimeLeft/TimeLeft.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_TEAM = "";
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				INFOPLIST_FILE = TimeLeft/Info.plist;
@@ -205,6 +316,48 @@
 			};
 			name = Release;
 		};
+		B00000710000000000000001 /* Widget Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = TimeLeftWidget/TimeLeftWidget.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 5;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = TimeLeftWidget/Info.plist;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.injisung0818.TimeLeft.widget;
+				PRODUCT_NAME = "Time Left Widget";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		B00000710000000000000002 /* Widget Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = TimeLeftWidget/TimeLeftWidget.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 5;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = TimeLeftWidget/Info.plist;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.injisung0818.TimeLeft.widget;
+				PRODUCT_NAME = "Time Left Widget";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -222,6 +375,15 @@
 			buildConfigurations = (
 				A00000710000000000000001 /* Debug */,
 				A00000710000000000000002 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B00000610000000000000001 /* Build configuration list for PBXNativeTarget "Time Left Widget" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B00000710000000000000001 /* Widget Debug */,
+				B00000710000000000000002 /* Widget Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
