@@ -41,7 +41,7 @@ struct SettingsView: View {
                         .accessibilityLabel("새 일정 추가")
                 }
             } footer: {
-                Text("하교와 등교는 기본 일정으로 유지됩니다. 사용자 지정 일정은 수정하거나 삭제할 수 있습니다.")
+                Text("하교 일정은 금요일 14:20 이후 일요일 21:00 등교 일정으로 자동 전환됩니다.")
             }
 
             Section("표시") {
@@ -81,8 +81,8 @@ struct SettingsView: View {
     }
 
     private var versionString: String {
-        let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "1.1.2"
-        let build = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "8"
+        let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "1.2.0"
+        let build = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "9"
         return "\(version) (\(build))"
     }
 }

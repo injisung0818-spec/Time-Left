@@ -45,6 +45,9 @@ enum MenuBarDisplayStyle: String, CaseIterable, Identifiable {
 }
 
 struct CountdownSchedule: Identifiable, Codable, Equatable {
+    static let schoolID = UUID(uuidString: "D2924D34-AE4B-4595-A850-3B4729D2C4B6")!
+    static let legacySchoolArrivalID = UUID(uuidString: "B5957E17-33E1-4850-BC3E-3427FA0AA5CD")!
+
     var id: UUID
     var name: String
     var kind: CountdownKind
@@ -56,15 +59,9 @@ struct CountdownSchedule: Identifiable, Codable, Equatable {
     var usesSchoolCycle: Bool
 
     static func school() -> CountdownSchedule {
-        CountdownSchedule(id: UUID(uuidString: "D2924D34-AE4B-4595-A850-3B4729D2C4B6")!, name: "하교", kind: .weekdayTime, weekday: 6,
+        CountdownSchedule(id: schoolID, name: "하교", kind: .weekdayTime, weekday: 6,
                           timeOfDay: Calendar.current.date(from: DateComponents(hour: 14, minute: 20)) ?? Date(), repeatWeekly: true,
                           selectedDate: Date(), isBuiltIn: true, usesSchoolCycle: true)
-    }
-
-    static func schoolArrival() -> CountdownSchedule {
-        CountdownSchedule(id: UUID(uuidString: "B5957E17-33E1-4850-BC3E-3427FA0AA5CD")!, name: "등교", kind: .weekdayTime, weekday: 1,
-                          timeOfDay: Calendar.current.date(from: DateComponents(hour: 21, minute: 0)) ?? Date(), repeatWeekly: true,
-                          selectedDate: Date(), isBuiltIn: true, usesSchoolCycle: false)
     }
 
     static func new() -> CountdownSchedule {
@@ -86,19 +83,28 @@ final class Preferences: ObservableObject {
         let sharedDefaults = UserDefaults(suiteName: Self.appGroupID) ?? .standard
         let legacyDefaults = UserDefaults.standard
         defaults = sharedDefaults
-        let loadedSchedules: [CountdownSchedule]
+        var loadedSchedules: [CountdownSchedule]
         if let data = sharedDefaults.data(forKey: "schedules"),
            let savedSchedules = try? JSONDecoder().decode([CountdownSchedule].self, from: data), !savedSchedules.isEmpty {
             loadedSchedules = savedSchedules
         } else if migrateLegacyData {
             loadedSchedules = Self.migratedSchedules(defaults: legacyDefaults)
         } else {
-            loadedSchedules = [CountdownSchedule.school(), CountdownSchedule.schoolArrival()]
+            loadedSchedules = [CountdownSchedule.school()]
+        }
+
+        // Merge the former standalone 등교 item into the 하교/등교 weekly cycle.
+        loadedSchedules.removeAll { $0.id == CountdownSchedule.legacySchoolArrivalID }
+        if let schoolIndex = loadedSchedules.firstIndex(where: { $0.id == CountdownSchedule.schoolID }) {
+            loadedSchedules[schoolIndex] = CountdownSchedule.school()
+        } else {
+            loadedSchedules.insert(CountdownSchedule.school(), at: 0)
         }
         schedules = loadedSchedules
         let savedID = (sharedDefaults.string(forKey: "selectedScheduleID") ?? legacyDefaults.string(forKey: "selectedScheduleID"))
             .flatMap(UUID.init(uuidString:))
-        selectedScheduleID = loadedSchedules.contains(where: { $0.id == savedID }) ? savedID! : loadedSchedules[0].id
+        let migratedID = savedID == CountdownSchedule.legacySchoolArrivalID ? CountdownSchedule.schoolID : savedID
+        selectedScheduleID = loadedSchedules.contains(where: { $0.id == migratedID }) ? migratedID! : loadedSchedules[0].id
         displayUnit = DisplayUnit(rawValue: sharedDefaults.string(forKey: "displayUnit") ?? legacyDefaults.string(forKey: "displayUnit") ?? "automatic") ?? .automatic
         // Older saved values (time/gauge) migrate to the compact text display.
         menuBarDisplayStyle = MenuBarDisplayStyle(rawValue: sharedDefaults.string(forKey: "menuBarDisplayStyle") ?? legacyDefaults.string(forKey: "menuBarDisplayStyle") ?? "compact") ?? .compact
@@ -123,7 +129,7 @@ final class Preferences: ObservableObject {
     }
 
     private static func migratedSchedules(defaults: UserDefaults) -> [CountdownSchedule] {
-        var values = [CountdownSchedule.school(), CountdownSchedule.schoolArrival()]
+        var values = [CountdownSchedule.school()]
         let legacyName = defaults.string(forKey: "targetName") ?? "하교"
         let legacyKind = CountdownKind(rawValue: defaults.string(forKey: "kind") ?? "weekdayTime") ?? .weekdayTime
         if legacyName != "하교" || legacyKind != .weekdayTime {

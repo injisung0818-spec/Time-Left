@@ -45,7 +45,7 @@ struct TimeLeftWidgetProvider: TimelineProvider {
             return (
                 WidgetSchedule(
                     id: schedule.id,
-                    name: schedule.name,
+                    name: CountdownEngine.displayName(schedule: schedule, target: target, calendar: .current),
                     remaining: CountdownEngine.widgetDuration(remaining),
                     isSelected: schedule.id == preferences.selectedScheduleID
                 ),

@@ -101,7 +101,7 @@ enum CountdownEngine {
         return formatter.string(from: date)
     }
 
-    private static func displayName(schedule: CountdownSchedule, target: Date?, calendar: Calendar) -> String {
+    static func displayName(schedule: CountdownSchedule, target: Date?, calendar: Calendar) -> String {
         let configuredName = schedule.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? "카운트다운" : schedule.name
         guard schedule.usesSchoolCycle,
               schedule.kind == .weekdayTime,

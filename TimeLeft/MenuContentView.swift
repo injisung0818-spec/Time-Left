@@ -34,7 +34,7 @@ struct MenuContentView: View {
                     preferences.selectSchedule(schedule)
                 } label: {
                     HStack {
-                        Text(schedule.name)
+                        Text(currentName(for: schedule))
                         Spacer()
                         if preferences.selectedScheduleID == schedule.id {
                             Image(systemName: "checkmark")
@@ -66,5 +66,10 @@ struct MenuContentView: View {
             .padding(.bottom, 8)
         }
         .frame(width: 300)
+    }
+
+    private func currentName(for schedule: CountdownSchedule) -> String {
+        let target = CountdownEngine.targetDate(schedule: schedule, now: Date(), calendar: .current)
+        return CountdownEngine.displayName(schedule: schedule, target: target, calendar: .current)
     }
 }
