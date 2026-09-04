@@ -1,15 +1,17 @@
 import AppKit
 import SwiftUI
 
+@MainActor
 final class SettingsWindowManager {
     static let shared = SettingsWindowManager()
 
     private var windowController: NSWindowController?
 
-    func show(preferences: Preferences) {
+    func show(preferences: Preferences, updateChecker: GitHubReleaseChecker) {
         if windowController == nil {
             let rootView = SettingsView()
                 .environmentObject(preferences)
+                .environmentObject(updateChecker)
 
             let window = NSWindow(
                 contentRect: NSRect(x: 0, y: 0, width: 440, height: 360),
@@ -24,6 +26,7 @@ final class SettingsWindowManager {
             windowController = NSWindowController(window: window)
         }
 
+        updateChecker.checkForLatestRelease()
         NSApp.activate(ignoringOtherApps: true)
         windowController?.showWindow(nil)
         windowController?.window?.makeKeyAndOrderFront(nil)

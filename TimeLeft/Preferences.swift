@@ -1,15 +1,9 @@
 import Foundation
 import Combine
 
-enum CountdownKind: String, CaseIterable, Identifiable {
-    case weekdayTime
-    case todayTime
-    case specificDate
-    case yearEnd
-    case customDate
-
+enum CountdownKind: String, CaseIterable, Identifiable, Codable {
+    case weekdayTime, todayTime, specificDate, yearEnd, customDate
     var id: String { rawValue }
-
     var title: String {
         switch self {
         case .weekdayTime: return "특정 요일 / 시간"
@@ -22,16 +16,8 @@ enum CountdownKind: String, CaseIterable, Identifiable {
 }
 
 enum DisplayUnit: String, CaseIterable, Identifiable {
-    case automatic
-    case seconds
-    case minutes
-    case hours
-    case days
-    case weeks
-    case years
-
+    case automatic, seconds, minutes, hours, days, weeks, years
     var id: String { rawValue }
-
     var title: String {
         switch self {
         case .automatic: return "자동"
@@ -46,102 +32,98 @@ enum DisplayUnit: String, CaseIterable, Identifiable {
 }
 
 enum MenuBarDisplayStyle: String, CaseIterable, Identifiable {
-    case time
-    case gauge
-
+    case time, gauge
     var id: String { rawValue }
-
-    var title: String {
-        switch self {
-        case .time: return "남은 시간"
-        case .gauge: return "진행 게이지"
-        }
-    }
+    var title: String { self == .time ? "남은 시간" : "진행 게이지" }
 }
 
-enum QuickPreset: String, CaseIterable, Identifiable {
-    case school
-    case year
-    case custom
+struct CountdownSchedule: Identifiable, Codable, Equatable {
+    var id: UUID
+    var name: String
+    var kind: CountdownKind
+    var weekday: Int
+    var timeOfDay: Date
+    var repeatWeekly: Bool
+    var selectedDate: Date
+    var isBuiltIn: Bool
+    var usesSchoolCycle: Bool
 
-    var id: String { rawValue }
+    static func school() -> CountdownSchedule {
+        CountdownSchedule(id: UUID(uuidString: "D2924D34-AE4B-4595-A850-3B4729D2C4B6")!, name: "하교", kind: .weekdayTime, weekday: 6,
+                          timeOfDay: Calendar.current.date(from: DateComponents(hour: 14, minute: 20)) ?? Date(), repeatWeekly: true,
+                          selectedDate: Date(), isBuiltIn: true, usesSchoolCycle: true)
+    }
 
-    var title: String {
-        switch self {
-        case .school: return "하교"
-        case .year: return "올해"
-        case .custom: return "사용자 지정"
-        }
+    static func schoolArrival() -> CountdownSchedule {
+        CountdownSchedule(id: UUID(uuidString: "B5957E17-33E1-4850-BC3E-3427FA0AA5CD")!, name: "등교", kind: .weekdayTime, weekday: 1,
+                          timeOfDay: Calendar.current.date(from: DateComponents(hour: 21, minute: 0)) ?? Date(), repeatWeekly: true,
+                          selectedDate: Date(), isBuiltIn: true, usesSchoolCycle: false)
+    }
+
+    static func new() -> CountdownSchedule {
+        CountdownSchedule(id: UUID(), name: "새 일정", kind: .specificDate, weekday: 2, timeOfDay: Date(), repeatWeekly: false,
+                          selectedDate: Calendar.current.date(byAdding: .day, value: 1, to: Date()) ?? Date(), isBuiltIn: false, usesSchoolCycle: false)
     }
 }
 
 final class Preferences: ObservableObject {
     private let defaults = UserDefaults.standard
-    private var isLoading = true
-    private var isApplyingPreset = false
 
-    @Published var targetName: String { didSet { markAsCustom(); save() } }
-    @Published var kind: CountdownKind { didSet { markAsCustom(); save() } }
-    @Published var weekday: Int { didSet { markAsCustom(); save() } } // Calendar weekday: Sunday = 1
-    @Published var timeOfDay: Date { didSet { markAsCustom(); save() } }
-    @Published var repeatWeekly: Bool { didSet { markAsCustom(); save() } }
-    @Published var selectedDate: Date { didSet { markAsCustom(); save() } }
+    @Published private(set) var schedules: [CountdownSchedule]
+    @Published private(set) var selectedScheduleID: UUID
     @Published var displayUnit: DisplayUnit { didSet { save() } }
     @Published var menuBarDisplayStyle: MenuBarDisplayStyle { didSet { save() } }
-    @Published var activePreset: QuickPreset { didSet { save() } }
 
     init() {
-        let defaultTime = Calendar.current.date(from: DateComponents(hour: 14, minute: 20)) ?? Date()
-        let defaultDate = Calendar.current.date(byAdding: .day, value: 1, to: Date()) ?? Date()
-
-        targetName = defaults.string(forKey: "targetName") ?? "하교"
-        kind = CountdownKind(rawValue: defaults.string(forKey: "kind") ?? "weekdayTime") ?? .weekdayTime
-        weekday = defaults.object(forKey: "weekday") as? Int ?? 6 // Friday
-        timeOfDay = defaults.object(forKey: "timeOfDay") as? Date ?? defaultTime
-        repeatWeekly = defaults.object(forKey: "repeatWeekly") as? Bool ?? true
-        selectedDate = defaults.object(forKey: "selectedDate") as? Date ?? defaultDate
+        let loadedSchedules: [CountdownSchedule]
+        if let data = defaults.data(forKey: "schedules"),
+           let savedSchedules = try? JSONDecoder().decode([CountdownSchedule].self, from: data), !savedSchedules.isEmpty {
+            loadedSchedules = savedSchedules
+        } else {
+            loadedSchedules = Self.migratedSchedules(defaults: defaults)
+        }
+        schedules = loadedSchedules
+        let savedID = defaults.string(forKey: "selectedScheduleID").flatMap(UUID.init(uuidString:))
+        selectedScheduleID = loadedSchedules.contains(where: { $0.id == savedID }) ? savedID! : loadedSchedules[0].id
         displayUnit = DisplayUnit(rawValue: defaults.string(forKey: "displayUnit") ?? "automatic") ?? .automatic
         menuBarDisplayStyle = MenuBarDisplayStyle(rawValue: defaults.string(forKey: "menuBarDisplayStyle") ?? "time") ?? .time
-        activePreset = QuickPreset(rawValue: defaults.string(forKey: "activePreset") ?? "school") ?? .school
-        isLoading = false
+        save()
     }
 
-    func selectPreset(_ preset: QuickPreset) {
-        isApplyingPreset = true
-        defer { isApplyingPreset = false }
-        activePreset = preset
-        switch preset {
-        case .school:
-            targetName = "하교"
-            kind = .weekdayTime
-            weekday = 6
-            timeOfDay = Calendar.current.date(from: DateComponents(hour: 14, minute: 20)) ?? timeOfDay
-            repeatWeekly = true
-        case .year:
-            targetName = "올해"
-            kind = .yearEnd
-        case .custom:
-            if targetName == "하교" || targetName == "올해" {
-                targetName = "사용자 지정"
-            }
+    var selectedSchedule: CountdownSchedule { schedules.first(where: { $0.id == selectedScheduleID }) ?? schedules[0] }
+
+    func selectSchedule(_ schedule: CountdownSchedule) { selectedScheduleID = schedule.id; save() }
+    func addSchedule(_ schedule: CountdownSchedule) { schedules.append(schedule); selectedScheduleID = schedule.id; save() }
+    func updateSchedule(_ schedule: CountdownSchedule) {
+        guard let index = schedules.firstIndex(where: { $0.id == schedule.id }) else { return }
+        schedules[index] = schedule; save()
+    }
+    func deleteSchedule(_ schedule: CountdownSchedule) {
+        guard !schedule.isBuiltIn else { return }
+        schedules.removeAll { $0.id == schedule.id }
+        if selectedScheduleID == schedule.id { selectedScheduleID = schedules[0].id }
+        save()
+    }
+
+    private static func migratedSchedules(defaults: UserDefaults) -> [CountdownSchedule] {
+        var values = [CountdownSchedule.school(), CountdownSchedule.schoolArrival()]
+        let legacyName = defaults.string(forKey: "targetName") ?? "하교"
+        let legacyKind = CountdownKind(rawValue: defaults.string(forKey: "kind") ?? "weekdayTime") ?? .weekdayTime
+        if legacyName != "하교" || legacyKind != .weekdayTime {
+            values.append(CountdownSchedule(id: UUID(), name: legacyName, kind: legacyKind,
+                                            weekday: defaults.object(forKey: "weekday") as? Int ?? 6,
+                                            timeOfDay: defaults.object(forKey: "timeOfDay") as? Date ?? Date(),
+                                            repeatWeekly: defaults.object(forKey: "repeatWeekly") as? Bool ?? true,
+                                            selectedDate: defaults.object(forKey: "selectedDate") as? Date ?? Date(),
+                                            isBuiltIn: false, usesSchoolCycle: false))
         }
-    }
-
-    private func markAsCustom() {
-        guard !isLoading, !isApplyingPreset else { return }
-        activePreset = .custom
+        return values
     }
 
     private func save() {
-        guard !isLoading else { return }
-        defaults.set(targetName, forKey: "targetName")
-        defaults.set(kind.rawValue, forKey: "kind")
-        defaults.set(weekday, forKey: "weekday")
-        defaults.set(timeOfDay, forKey: "timeOfDay")
-        defaults.set(repeatWeekly, forKey: "repeatWeekly")
-        defaults.set(selectedDate, forKey: "selectedDate")
+        defaults.set(try? JSONEncoder().encode(schedules), forKey: "schedules")
+        defaults.set(selectedScheduleID.uuidString, forKey: "selectedScheduleID")
         defaults.set(displayUnit.rawValue, forKey: "displayUnit")
         defaults.set(menuBarDisplayStyle.rawValue, forKey: "menuBarDisplayStyle")
-        defaults.set(activePreset.rawValue, forKey: "activePreset")
     }
 }

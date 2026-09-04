@@ -4,11 +4,14 @@ import SwiftUI
 struct TimeLeftApp: App {
     @StateObject private var preferences: Preferences
     @StateObject private var countdown: CountdownModel
+    @StateObject private var updateChecker: GitHubReleaseChecker
 
     init() {
         let preferences = Preferences()
+        let updateChecker = GitHubReleaseChecker()
         _preferences = StateObject(wrappedValue: preferences)
         _countdown = StateObject(wrappedValue: CountdownModel(preferences: preferences))
+        _updateChecker = StateObject(wrappedValue: updateChecker)
         LaunchAtLoginManager.registerIfNeeded()
     }
 
@@ -17,6 +20,7 @@ struct TimeLeftApp: App {
             MenuContentView()
                 .environmentObject(preferences)
                 .environmentObject(countdown)
+                .environmentObject(updateChecker)
         } label: {
             if preferences.menuBarDisplayStyle == .gauge {
                 ProgressView(value: countdown.snapshot.progress)
@@ -34,6 +38,7 @@ struct TimeLeftApp: App {
         Settings {
             SettingsView()
                 .environmentObject(preferences)
+                .environmentObject(updateChecker)
         }
     }
 }

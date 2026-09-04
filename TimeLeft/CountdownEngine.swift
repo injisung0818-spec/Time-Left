@@ -12,11 +12,12 @@ struct CountdownSnapshot {
 
 enum CountdownEngine {
     static func snapshot(preferences: Preferences, now: Date = Date(), calendar: Calendar = .current) -> CountdownSnapshot {
-        let target = targetDate(preferences: preferences, now: now, calendar: calendar)
+        let schedule = preferences.selectedSchedule
+        let target = targetDate(schedule: schedule, now: now, calendar: calendar)
         let remaining = max(0, (target ?? now).timeIntervalSince(now))
-        let progress = progressValue(preferences: preferences, target: target, now: now, calendar: calendar)
+        let progress = progressValue(schedule: schedule, target: target, now: now, calendar: calendar)
         let isComplete = target.map { now >= $0 } ?? false
-        let name = displayName(preferences: preferences, target: target, calendar: calendar)
+        let name = displayName(schedule: schedule, target: target, calendar: calendar)
         let prefix = name
 
         if isComplete {
@@ -41,17 +42,17 @@ enum CountdownEngine {
         )
     }
 
-    static func targetDate(preferences: Preferences, now: Date, calendar: Calendar) -> Date? {
-        switch preferences.kind {
+    static func targetDate(schedule: CountdownSchedule, now: Date, calendar: Calendar) -> Date? {
+        switch schedule.kind {
         case .weekdayTime:
-            if preferences.activePreset == .school, preferences.repeatWeekly {
+            if schedule.usesSchoolCycle, schedule.repeatWeekly {
                 return schoolTarget(now: now, calendar: calendar)
             }
-            return weekdayTarget(preferences: preferences, now: now, calendar: calendar)
+            return weekdayTarget(schedule: schedule, now: now, calendar: calendar)
         case .todayTime:
-            return date(on: now, time: preferences.timeOfDay, calendar: calendar)
+            return date(on: now, time: schedule.timeOfDay, calendar: calendar)
         case .specificDate, .customDate:
-            return preferences.selectedDate
+            return schedule.selectedDate
         case .yearEnd:
             let year = calendar.component(.year, from: now)
             return calendar.date(from: DateComponents(year: year + 1, month: 1, day: 1))
@@ -87,13 +88,13 @@ enum CountdownEngine {
         return formatter.string(from: date)
     }
 
-    private static func progressValue(preferences: Preferences, target: Date?, now: Date, calendar: Calendar) -> Double {
+    private static func progressValue(schedule: CountdownSchedule, target: Date?, now: Date, calendar: Calendar) -> Double {
         guard let target else { return 0 }
         let start: Date?
 
-        switch preferences.kind {
-        case .weekdayTime where preferences.repeatWeekly:
-            if preferences.activePreset == .school {
+        switch schedule.kind {
+        case .weekdayTime where schedule.repeatWeekly:
+            if schedule.usesSchoolCycle {
                 start = schoolCycleStart(target: target, calendar: calendar)
             } else {
                 start = calendar.date(byAdding: .day, value: -7, to: target)
@@ -123,11 +124,11 @@ enum CountdownEngine {
         return calendar.date(byAdding: .day, value: -5, to: target)
     }
 
-    private static func displayName(preferences: Preferences, target: Date?, calendar: Calendar) -> String {
-        let configuredName = preferences.targetName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? "카운트다운" : preferences.targetName
-        guard preferences.activePreset == .school,
-              preferences.kind == .weekdayTime,
-              preferences.repeatWeekly,
+    private static func displayName(schedule: CountdownSchedule, target: Date?, calendar: Calendar) -> String {
+        let configuredName = schedule.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? "카운트다운" : schedule.name
+        guard schedule.usesSchoolCycle,
+              schedule.kind == .weekdayTime,
+              schedule.repeatWeekly,
               let target,
               calendar.component(.weekday, from: target) == 1,
               calendar.component(.hour, from: target) == 21,
@@ -137,8 +138,8 @@ enum CountdownEngine {
         return "등교"
     }
 
-    private static func weekdayTarget(preferences: Preferences, now: Date, calendar: Calendar) -> Date? {
-        let time = calendar.dateComponents([.hour, .minute], from: preferences.timeOfDay)
+    private static func weekdayTarget(schedule: CountdownSchedule, now: Date, calendar: Calendar) -> Date? {
+        let time = calendar.dateComponents([.hour, .minute], from: schedule.timeOfDay)
         var current = calendar.dateComponents([.year, .month, .day, .weekday], from: now)
         current.hour = time.hour
         current.minute = time.minute
@@ -146,9 +147,9 @@ enum CountdownEngine {
         guard let currentWeekday = current.weekday,
               let candidate = calendar.date(from: current) else { return nil }
 
-        let dayOffset = (preferences.weekday - currentWeekday + 7) % 7
+        let dayOffset = (schedule.weekday - currentWeekday + 7) % 7
         var next = calendar.date(byAdding: .day, value: dayOffset, to: candidate) ?? candidate
-        if preferences.repeatWeekly, next <= now {
+        if schedule.repeatWeekly, next <= now {
             next = calendar.date(byAdding: .day, value: 7, to: next) ?? next
         }
         return next

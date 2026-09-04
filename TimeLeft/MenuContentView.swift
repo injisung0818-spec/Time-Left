@@ -4,6 +4,7 @@ import AppKit
 struct MenuContentView: View {
     @EnvironmentObject private var preferences: Preferences
     @EnvironmentObject private var countdown: CountdownModel
+    @EnvironmentObject private var updateChecker: GitHubReleaseChecker
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             VStack(alignment: .leading, spacing: 5) {
@@ -21,21 +22,21 @@ struct MenuContentView: View {
 
             Divider()
 
-            Text("빠른 프리셋")
+            Text("빠르게 전환")
                 .font(.caption)
                 .foregroundStyle(.secondary)
                 .padding(.horizontal, 12)
                 .padding(.top, 8)
                 .padding(.bottom, 2)
 
-            ForEach(QuickPreset.allCases) { preset in
+            ForEach(preferences.schedules) { schedule in
                 Button {
-                    preferences.selectPreset(preset)
+                    preferences.selectSchedule(schedule)
                 } label: {
                     HStack {
-                        Text(preset.title)
+                        Text(schedule.name)
                         Spacer()
-                        if preferences.activePreset == preset {
+                        if preferences.selectedScheduleID == schedule.id {
                             Image(systemName: "checkmark")
                                 .foregroundStyle(.tint)
                         }
@@ -49,7 +50,7 @@ struct MenuContentView: View {
             Divider()
 
             Button {
-                SettingsWindowManager.shared.show(preferences: preferences)
+                SettingsWindowManager.shared.show(preferences: preferences, updateChecker: updateChecker)
             } label: {
                 Label("설정", systemImage: "gearshape")
             }
