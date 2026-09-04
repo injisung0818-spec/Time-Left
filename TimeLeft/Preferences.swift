@@ -16,7 +16,7 @@ enum CountdownKind: String, CaseIterable, Identifiable, Codable {
     }
 }
 
-enum DisplayUnit: String, CaseIterable, Identifiable {
+enum DisplayUnit: String, CaseIterable, Identifiable, Codable {
     case automatic, seconds, minutes, hours, days, weeks, years
     var id: String { rawValue }
     var title: String {
@@ -32,7 +32,7 @@ enum DisplayUnit: String, CaseIterable, Identifiable {
     }
 }
 
-enum MenuBarDisplayStyle: String, CaseIterable, Identifiable {
+enum MenuBarDisplayStyle: String, CaseIterable, Identifiable, Codable {
     case compact, digital, icon
     var id: String { rawValue }
     var title: String {
@@ -77,16 +77,18 @@ struct CountdownSchedule: Identifiable, Codable, Equatable {
     var isBuiltIn: Bool
     var usesSchoolCycle: Bool
     var groupID: UUID?
+    var displayUnit: DisplayUnit?
+    var menuBarDisplayStyle: MenuBarDisplayStyle?
 
     static func school() -> CountdownSchedule {
         CountdownSchedule(id: schoolID, name: "하교", kind: .weekdayTime, weekday: 6,
                           timeOfDay: Calendar.current.date(from: DateComponents(hour: 14, minute: 20)) ?? Date(), repeatWeekly: true,
-                          selectedDate: Date(), isBuiltIn: true, usesSchoolCycle: true, groupID: nil)
+                          selectedDate: Date(), isBuiltIn: true, usesSchoolCycle: true, groupID: nil, displayUnit: nil, menuBarDisplayStyle: nil)
     }
 
     static func new() -> CountdownSchedule {
         CountdownSchedule(id: UUID(), name: "새 일정", kind: .specificDate, weekday: 2, timeOfDay: Date(), repeatWeekly: false,
-                          selectedDate: Calendar.current.date(byAdding: .day, value: 1, to: Date()) ?? Date(), isBuiltIn: false, usesSchoolCycle: false, groupID: nil)
+                          selectedDate: Calendar.current.date(byAdding: .day, value: 1, to: Date()) ?? Date(), isBuiltIn: false, usesSchoolCycle: false, groupID: nil, displayUnit: nil, menuBarDisplayStyle: nil)
     }
 }
 
@@ -164,6 +166,14 @@ final class Preferences: ObservableObject {
     var selectedSchedule: CountdownSchedule? {
         guard let selectedScheduleID else { return nil }
         return schedules.first(where: { $0.id == selectedScheduleID })
+    }
+
+    var selectedMenuBarDisplayStyle: MenuBarDisplayStyle {
+        selectedSchedule?.menuBarDisplayStyle ?? menuBarDisplayStyle
+    }
+
+    func displayUnit(for schedule: CountdownSchedule? = nil) -> DisplayUnit {
+        (schedule ?? selectedSchedule)?.displayUnit ?? displayUnit
     }
 
     func scheduleSections(includeEmptyGroups: Bool = false) -> [ScheduleSection] {
@@ -298,7 +308,7 @@ final class Preferences: ObservableObject {
                                             timeOfDay: defaults.object(forKey: "timeOfDay") as? Date ?? Date(),
                                             repeatWeekly: defaults.object(forKey: "repeatWeekly") as? Bool ?? true,
                                             selectedDate: defaults.object(forKey: "selectedDate") as? Date ?? Date(),
-                                            isBuiltIn: false, usesSchoolCycle: false, groupID: nil))
+                                            isBuiltIn: false, usesSchoolCycle: false, groupID: nil, displayUnit: nil, menuBarDisplayStyle: nil))
         }
         return values
     }

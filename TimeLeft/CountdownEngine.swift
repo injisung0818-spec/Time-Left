@@ -53,7 +53,7 @@ enum CountdownEngine {
             )
         }
 
-        let duration = formatDuration(remaining, unit: preferences.displayUnit, calendar: calendar)
+        let duration = formatDuration(remaining, unit: preferences.displayUnit(for: schedule), calendar: calendar)
         return CountdownSnapshot(
             targetDate: target,
             remaining: remaining,

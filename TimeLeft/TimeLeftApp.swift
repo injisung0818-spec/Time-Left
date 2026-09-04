@@ -39,9 +39,9 @@ struct TimeLeftApp: App {
                 .environmentObject(countdown)
                 .environmentObject(updateChecker)
         } label: {
-            switch preferences.menuBarDisplayStyle {
+            switch preferences.selectedMenuBarDisplayStyle {
             case .compact:
-                Text(CountdownEngine.formatDuration(countdown.snapshot.remaining, unit: preferences.displayUnit))
+                Text(CountdownEngine.formatDuration(countdown.snapshot.remaining, unit: preferences.displayUnit()))
                     .monospacedDigit()
             case .digital:
                 Text(CountdownEngine.digitalMenuBarText(countdown.snapshot.remaining))

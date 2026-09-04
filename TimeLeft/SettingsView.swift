@@ -105,14 +105,9 @@ struct SettingsView: View {
                 Picker("앱 모드", selection: $preferences.appAppearance) {
                     ForEach(AppAppearance.allCases) { appearance in Text(appearance.title).tag(appearance) }
                 }
-                Picker("메뉴 막대 표시", selection: $preferences.menuBarDisplayStyle) {
-                    ForEach(MenuBarDisplayStyle.allCases) { style in Text(style.title).tag(style) }
-                }
-                if preferences.menuBarDisplayStyle == .compact {
-                    Picker("표시 단위", selection: $preferences.displayUnit) {
-                        ForEach(DisplayUnit.allCases) { unit in Text(unit.title).tag(unit) }
-                    }
-                }
+                Text("메뉴 막대 표시 방식과 단위는 각 일정의 편집 화면에서 설정할 수 있습니다.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
             }
 
             Section("앱 실행") { LaunchAtLoginToggle() }
@@ -139,10 +134,14 @@ struct SettingsView: View {
             isAddingSchedule = true
         }
         .sheet(isPresented: $isAddingSchedule) {
-            ScheduleEditorSheet(schedule: .new(), groups: preferences.groups) { preferences.addSchedule($0) }
+            ScheduleEditorSheet(schedule: .new(), groups: preferences.groups,
+                                defaultDisplayUnit: preferences.displayUnit,
+                                defaultMenuBarDisplayStyle: preferences.menuBarDisplayStyle) { preferences.addSchedule($0) }
         }
         .sheet(item: $scheduleToEdit) { schedule in
-            ScheduleEditorSheet(schedule: schedule, groups: preferences.groups) { preferences.updateSchedule($0) }
+            ScheduleEditorSheet(schedule: schedule, groups: preferences.groups,
+                                defaultDisplayUnit: preferences.displayUnit,
+                                defaultMenuBarDisplayStyle: preferences.menuBarDisplayStyle) { preferences.updateSchedule($0) }
         }
         .sheet(isPresented: $isAddingProfile) {
             ProfileEditorSheet(profile: .new()) { preferences.addProfile($0) }
@@ -187,8 +186,8 @@ struct SettingsView: View {
     }
 
     private var versionString: String {
-        let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "2.0.0"
-        let build = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "11"
+        let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "2.1.0"
+        let build = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "12"
         return "\(version) (\(build))"
     }
 }
@@ -197,11 +196,16 @@ private struct ScheduleEditorSheet: View {
     @Environment(\.dismiss) private var dismiss
     @State private var draft: CountdownSchedule
     let groups: [CountdownGroup]
+    let defaultDisplayUnit: DisplayUnit
+    let defaultMenuBarDisplayStyle: MenuBarDisplayStyle
     let onSave: (CountdownSchedule) -> Void
 
-    init(schedule: CountdownSchedule, groups: [CountdownGroup], onSave: @escaping (CountdownSchedule) -> Void) {
+    init(schedule: CountdownSchedule, groups: [CountdownGroup], defaultDisplayUnit: DisplayUnit,
+         defaultMenuBarDisplayStyle: MenuBarDisplayStyle, onSave: @escaping (CountdownSchedule) -> Void) {
         _draft = State(initialValue: schedule)
         self.groups = groups
+        self.defaultDisplayUnit = defaultDisplayUnit
+        self.defaultMenuBarDisplayStyle = defaultMenuBarDisplayStyle
         self.onSave = onSave
     }
 
@@ -217,6 +221,14 @@ private struct ScheduleEditorSheet: View {
                     ForEach(CountdownKind.allCases) { kind in Text(kind.title).tag(kind) }
                 }
                 scheduleControls
+                Picker("메뉴 막대 표시", selection: scheduleDisplayStyle) {
+                    ForEach(MenuBarDisplayStyle.allCases) { style in Text(style.title).tag(style) }
+                }
+                if resolvedDisplayStyle == .compact {
+                    Picker("표시 단위", selection: scheduleDisplayUnit) {
+                        ForEach(DisplayUnit.allCases) { unit in Text(unit.title).tag(unit) }
+                    }
+                }
             }
             .formStyle(.grouped)
             HStack {
@@ -232,7 +244,15 @@ private struct ScheduleEditorSheet: View {
             }
             .padding()
         }
-        .frame(width: 440, height: 390)
+        .frame(width: 440, height: 470)
+    }
+
+    private var resolvedDisplayStyle: MenuBarDisplayStyle { draft.menuBarDisplayStyle ?? defaultMenuBarDisplayStyle }
+    private var scheduleDisplayStyle: Binding<MenuBarDisplayStyle> {
+        Binding(get: { resolvedDisplayStyle }, set: { draft.menuBarDisplayStyle = $0 })
+    }
+    private var scheduleDisplayUnit: Binding<DisplayUnit> {
+        Binding(get: { draft.displayUnit ?? defaultDisplayUnit }, set: { draft.displayUnit = $0 })
     }
 
     @ViewBuilder private var scheduleControls: some View {
