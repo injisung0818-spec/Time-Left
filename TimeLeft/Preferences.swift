@@ -123,9 +123,9 @@ final class Preferences: ObservableObject {
     @Published private(set) var profiles: [CountdownProfile]
     @Published private(set) var selectedProfileID: UUID
     @Published private(set) var selectedScheduleID: UUID?
-    @Published var displayUnit: DisplayUnit { didSet { save() } }
-    @Published var menuBarDisplayStyle: MenuBarDisplayStyle { didSet { save() } }
-    @Published var appAppearance: AppAppearance { didSet { save() } }
+    @Published var displayUnit: DisplayUnit { didSet { save(reloadWidgets: false) } }
+    @Published var menuBarDisplayStyle: MenuBarDisplayStyle { didSet { save(reloadWidgets: false) } }
+    @Published var appAppearance: AppAppearance { didSet { save(reloadWidgets: false) } }
 
     init(migrateLegacyData: Bool = true) {
         let sharedDefaults = UserDefaults(suiteName: Self.appGroupID) ?? .standard
@@ -202,7 +202,7 @@ final class Preferences: ObservableObject {
     func updateProfile(_ profile: CountdownProfile) {
         guard let index = profiles.firstIndex(where: { $0.id == profile.id }) else { return }
         profiles[index] = profile
-        save()
+        save(reloadWidgets: false)
     }
 
     func deleteProfile(_ profile: CountdownProfile) {
@@ -216,18 +216,18 @@ final class Preferences: ObservableObject {
     }
 
     func addGroup(_ group: CountdownGroup) {
-        mutateSelectedProfile { $0.groups.append(group) }
+        mutateSelectedProfile(reloadWidgets: false) { $0.groups.append(group) }
     }
 
     func updateGroup(_ group: CountdownGroup) {
-        mutateSelectedProfile { profile in
+        mutateSelectedProfile(reloadWidgets: false) { profile in
             guard let index = profile.groups.firstIndex(where: { $0.id == group.id }) else { return }
             profile.groups[index] = group
         }
     }
 
     func deleteGroup(_ group: CountdownGroup) {
-        mutateSelectedProfile { profile in
+        mutateSelectedProfile(reloadWidgets: false) { profile in
             profile.groups.removeAll { $0.id == group.id }
             for index in profile.schedules.indices where profile.schedules[index].groupID == group.id {
                 profile.schedules[index].groupID = nil
@@ -236,6 +236,24 @@ final class Preferences: ObservableObject {
     }
 
     func selectSchedule(_ schedule: CountdownSchedule) { selectedScheduleID = schedule.id; save() }
+
+    func selectNextUpcomingScheduleIfNeeded(now: Date = Date(), calendar: Calendar = .current) {
+        guard let selectedSchedule,
+              CountdownEngine.isExpiredOneTimeSchedule(selectedSchedule, now: now, calendar: calendar)
+        else { return }
+
+        let nextSchedule = schedules
+            .filter { !CountdownEngine.isExpiredOneTimeSchedule($0, now: now, calendar: calendar) }
+            .compactMap { schedule -> (CountdownSchedule, Date)? in
+                guard let target = CountdownEngine.targetDate(schedule: schedule, now: now, calendar: calendar), target > now else { return nil }
+                return (schedule, target)
+            }
+            .min { $0.1 < $1.1 }?
+            .0
+
+        selectedScheduleID = nextSchedule?.id
+        save()
+    }
     func addSchedule(_ schedule: CountdownSchedule) {
         mutateSelectedProfile { profile in
             var newSchedule = schedule
@@ -246,12 +264,16 @@ final class Preferences: ObservableObject {
     }
 
     func updateSchedule(_ schedule: CountdownSchedule) {
-        mutateSelectedProfile { profile in
-            guard let index = profile.schedules.firstIndex(where: { $0.id == schedule.id }) else { return }
-            var updatedSchedule = schedule
-            if let groupID = updatedSchedule.groupID, !profile.groups.contains(where: { $0.id == groupID }) { updatedSchedule.groupID = nil }
-            profile.schedules[index] = updatedSchedule
+        guard let profileIndex = profiles.firstIndex(where: { $0.id == selectedProfileID }),
+              let scheduleIndex = profiles[profileIndex].schedules.firstIndex(where: { $0.id == schedule.id }) else { return }
+        var updatedSchedule = schedule
+        if let groupID = updatedSchedule.groupID,
+           !profiles[profileIndex].groups.contains(where: { $0.id == groupID }) {
+            updatedSchedule.groupID = nil
         }
+        let previousSchedule = profiles[profileIndex].schedules[scheduleIndex]
+        profiles[profileIndex].schedules[scheduleIndex] = updatedSchedule
+        save(reloadWidgets: Self.widgetContentChanged(from: previousSchedule, to: updatedSchedule))
     }
 
     func deleteSchedule(_ schedule: CountdownSchedule) {
@@ -262,10 +284,20 @@ final class Preferences: ObservableObject {
         }
     }
 
-    private func mutateSelectedProfile(_ mutation: (inout CountdownProfile) -> Void) {
+    private func mutateSelectedProfile(reloadWidgets: Bool = true, _ mutation: (inout CountdownProfile) -> Void) {
         guard let index = profiles.firstIndex(where: { $0.id == selectedProfileID }) else { return }
         mutation(&profiles[index])
-        save()
+        save(reloadWidgets: reloadWidgets)
+    }
+
+    private static func widgetContentChanged(from previous: CountdownSchedule, to updated: CountdownSchedule) -> Bool {
+        var previous = previous
+        var updated = updated
+        previous.displayUnit = nil
+        previous.menuBarDisplayStyle = nil
+        updated.displayUnit = nil
+        updated.menuBarDisplayStyle = nil
+        return previous != updated
     }
 
     private static func loadLegacySchedules(sharedDefaults: UserDefaults, legacyDefaults: UserDefaults, migrateLegacyData: Bool) -> [CountdownSchedule] {

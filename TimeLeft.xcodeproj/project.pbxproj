@@ -15,12 +15,17 @@
 		A00000010000000000000008 /* SettingsWindowManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000110000000000000009 /* SettingsWindowManager.swift */; };
 		A00000010000000000000009 /* LaunchAtLoginManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000110000000000000010 /* LaunchAtLoginManager.swift */; };
 		A00000010000000000000010 /* GitHubReleaseChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000110000000000000011 /* GitHubReleaseChecker.swift */; };
+		A00000010000000000000011 /* URLSchemeHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000110000000000000012 /* URLSchemeHandler.swift */; };
+		A00000010000000000000012 /* Editors.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000110000000000000013 /* Editors.swift */; };
 		A00000010000000000000006 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A00000110000000000000006 /* Assets.xcassets */; };
 		A00000010000000000000007 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A00000110000000000000007 /* Info.plist */; };
 		B00000010000000000000001 /* TimeLeftWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000110000000000000001 /* TimeLeftWidget.swift */; };
 		B00000010000000000000002 /* Preferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000110000000000000002 /* Preferences.swift */; };
 		B00000010000000000000003 /* CountdownEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000110000000000000003 /* CountdownEngine.swift */; };
 		B00000010000000000000004 /* Time Left Widget.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = B00000110000000000000004 /* Time Left Widget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		C00000010000000000000001 /* CountdownEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C00000110000000000000001 /* CountdownEngineTests.swift */; };
+		C00000010000000000000002 /* Preferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000110000000000000002 /* Preferences.swift */; };
+		C00000010000000000000003 /* CountdownEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000110000000000000003 /* CountdownEngine.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -56,6 +61,8 @@
 		A00000110000000000000009 /* SettingsWindowManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWindowManager.swift; sourceTree = "<group>"; };
 		A00000110000000000000010 /* LaunchAtLoginManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchAtLoginManager.swift; sourceTree = "<group>"; };
 		A00000110000000000000011 /* GitHubReleaseChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitHubReleaseChecker.swift; sourceTree = "<group>"; };
+		A00000110000000000000012 /* URLSchemeHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLSchemeHandler.swift; sourceTree = "<group>"; };
+		A00000110000000000000013 /* Editors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Editors.swift; sourceTree = "<group>"; };
 		A00000110000000000000006 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A00000110000000000000007 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A00000110000000000000008 /* TimeLeft.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Time Left.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -64,6 +71,8 @@
 		B00000110000000000000003 /* TimeLeftWidget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TimeLeftWidget.entitlements; sourceTree = "<group>"; };
 		B00000110000000000000004 /* Time Left Widget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Time Left Widget.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B00000110000000000000005 /* TimeLeft.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TimeLeft.entitlements; sourceTree = "<group>"; };
+		C00000110000000000000001 /* CountdownEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountdownEngineTests.swift; sourceTree = "<group>"; };
+		C00000110000000000000002 /* Time Left Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Time Left Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -81,6 +90,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C00000210000000000000002 /* Test Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -89,6 +105,7 @@
 			children = (
 				A00000310000000000000001 /* TimeLeft */,
 				B00000310000000000000001 /* TimeLeftWidget */,
+				C00000310000000000000002 /* TimeLeftTests */,
 				A00000310000000000000002 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -104,6 +121,8 @@
 				A00000110000000000000009 /* SettingsWindowManager.swift */,
 				A00000110000000000000010 /* LaunchAtLoginManager.swift */,
 				A00000110000000000000011 /* GitHubReleaseChecker.swift */,
+				A00000110000000000000012 /* URLSchemeHandler.swift */,
+				A00000110000000000000013 /* Editors.swift */,
 				A00000110000000000000006 /* Assets.xcassets */,
 				A00000110000000000000007 /* Info.plist */,
 				B00000110000000000000005 /* TimeLeft.entitlements */,
@@ -116,6 +135,7 @@
 			children = (
 				A00000110000000000000008 /* TimeLeft.app */,
 				B00000110000000000000004 /* Time Left Widget.appex */,
+				C00000110000000000000002 /* Time Left Tests.xctest */,
 			);
 			name = Products;
 			path = "";
@@ -129,6 +149,14 @@
 				B00000110000000000000003 /* TimeLeftWidget.entitlements */,
 			);
 			path = TimeLeftWidget;
+			sourceTree = "<group>";
+		};
+		C00000310000000000000002 /* TimeLeftTests */ = {
+			isa = PBXGroup;
+			children = (
+				C00000110000000000000001 /* CountdownEngineTests.swift */,
+			);
+			path = TimeLeftTests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -170,6 +198,22 @@
 			productReference = B00000110000000000000004 /* Time Left Widget.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
+		C00000410000000000000001 /* Time Left Tests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C00000610000000000000001 /* Build configuration list for PBXNativeTarget "Time Left Tests" */;
+			buildPhases = (
+				C00000210000000000000001 /* Test Sources */,
+				C00000210000000000000002 /* Test Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Time Left Tests";
+			productName = "Time Left Tests";
+			productReference = C00000110000000000000002 /* Time Left Tests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -181,9 +225,12 @@
 					A00000410000000000000001 = {
 						CreatedOnToolsVersion = 26.6;
 					};
-					B00000410000000000000001 = {
-						CreatedOnToolsVersion = 26.6;
-					};
+				B00000410000000000000001 = {
+					CreatedOnToolsVersion = 26.6;
+				};
+				C00000410000000000000001 = {
+					CreatedOnToolsVersion = 26.6;
+				};
 				};
 			};
 			buildConfigurationList = A00000610000000000000001 /* Build configuration list for PBXProject "Time Left" */;
@@ -201,6 +248,7 @@
 			targets = (
 				A00000410000000000000001 /* Time Left */,
 				B00000410000000000000001 /* Time Left Widget */,
+				C00000410000000000000001 /* Time Left Tests */,
 			);
 		};
 /* End PBXProject section */
@@ -236,6 +284,8 @@
 				A00000010000000000000008 /* SettingsWindowManager.swift in Sources */,
 				A00000010000000000000009 /* LaunchAtLoginManager.swift in Sources */,
 				A00000010000000000000010 /* GitHubReleaseChecker.swift in Sources */,
+				A00000010000000000000011 /* URLSchemeHandler.swift in Sources */,
+				A00000010000000000000012 /* Editors.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -246,6 +296,16 @@
 				B00000010000000000000001 /* TimeLeftWidget.swift in Sources */,
 				B00000010000000000000002 /* Preferences.swift in Sources */,
 				B00000010000000000000003 /* CountdownEngine.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C00000210000000000000001 /* Test Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C00000010000000000000001 /* CountdownEngineTests.swift in Sources */,
+				C00000010000000000000002 /* Preferences.swift in Sources */,
+				C00000010000000000000003 /* CountdownEngine.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -268,7 +328,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = TimeLeft/TimeLeft.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 13;
+				CURRENT_PROJECT_VERSION = 14;
 				DEVELOPMENT_TEAM = "";
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				INFOPLIST_FILE = TimeLeft/Info.plist;
@@ -288,7 +348,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = TimeLeft/TimeLeft.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 13;
+				CURRENT_PROJECT_VERSION = 14;
 				DEVELOPMENT_TEAM = "";
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				INFOPLIST_FILE = TimeLeft/Info.plist;
@@ -324,7 +384,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = TimeLeftWidget/TimeLeftWidget.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 13;
+				CURRENT_PROJECT_VERSION = 14;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_APP_SANDBOX = YES;
 				GENERATE_INFOPLIST_FILE = NO;
@@ -346,7 +406,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = TimeLeftWidget/TimeLeftWidget.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 13;
+				CURRENT_PROJECT_VERSION = 14;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_APP_SANDBOX = YES;
 				GENERATE_INFOPLIST_FILE = NO;
@@ -357,6 +417,38 @@
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		C00000710000000000000001 /* Test Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 14;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.injisung0818.TimeLeftTests;
+				PRODUCT_NAME = "Time Left Tests";
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "";
+			};
+			name = Debug;
+		};
+		C00000710000000000000002 /* Test Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 14;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.injisung0818.TimeLeftTests;
+				PRODUCT_NAME = "Time Left Tests";
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "";
 			};
 			name = Release;
 		};
@@ -389,6 +481,15 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		C00000610000000000000001 /* Build configuration list for PBXNativeTarget "Time Left Tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C00000710000000000000001 /* Test Debug */,
+				C00000710000000000000002 /* Test Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
 	};

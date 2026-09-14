@@ -27,9 +27,17 @@ struct TimeLeftApp: App {
         _preferences = StateObject(wrappedValue: preferences)
         _countdown = StateObject(wrappedValue: CountdownModel(preferences: preferences))
         _updateChecker = StateObject(wrappedValue: updateChecker)
-        LaunchAtLoginManager.registerIfNeeded()
         AppearanceManager.shared.apply(preferences.appAppearance)
         WidgetCenter.shared.reloadTimelines(ofKind: "TimeLeftWidget")
+        URLSchemeHandler.shared.start { url in
+            guard url.scheme?.lowercased() == "timeleft" else { return }
+            if url.host?.lowercased() == "schedule",
+               let scheduleID = UUID(uuidString: url.path.trimmingCharacters(in: CharacterSet(charactersIn: "/"))),
+               let schedule = preferences.schedules.first(where: { $0.id == scheduleID }) {
+                preferences.selectSchedule(schedule)
+            }
+            SettingsWindowManager.shared.show(preferences: preferences, updateChecker: updateChecker)
+        }
     }
 
     var body: some Scene {

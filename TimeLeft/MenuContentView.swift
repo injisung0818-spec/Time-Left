@@ -1,5 +1,5 @@
-import SwiftUI
 import AppKit
+import SwiftUI
 
 struct MenuContentView: View {
     @EnvironmentObject private var preferences: Preferences
@@ -44,41 +44,62 @@ struct MenuContentView: View {
 
             Divider()
 
-            Text("기타")
-                .font(.caption)
-                .foregroundStyle(.secondary)
-                .padding(.horizontal, 12)
-                .padding(.top, 7)
-                .padding(.bottom, 2)
-
-            if otherSchedules.isEmpty {
-                Text("전환할 일정이 없습니다.")
+            if preferences.scheduleSections().isEmpty {
+                Text("이 프로필에 저장된 일정이 없습니다.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .padding(.horizontal, 12)
-                    .padding(.vertical, 5)
+                    .padding(.vertical, 8)
             } else {
-                ForEach(otherSchedules) { schedule in
-                    Button {
-                        preferences.selectSchedule(schedule)
-                    } label: {
-                        HStack {
-                            Text(currentName(for: schedule))
-                                .fontWeight(preferences.selectedScheduleID == schedule.id ? .semibold : .regular)
-                            Spacer()
-                            if preferences.selectedScheduleID == schedule.id {
-                                Image(systemName: "checkmark.circle.fill")
-                                    .foregroundStyle(.tint)
+                ForEach(preferences.scheduleSections()) { section in
+                    Text(section.name)
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(.secondary)
+                        .padding(.horizontal, 12)
+                        .padding(.top, 7)
+                        .padding(.bottom, 2)
+
+                    ForEach(Array(section.schedules.prefix(8))) { schedule in
+                        Button {
+                            preferences.selectSchedule(schedule)
+                        } label: {
+                            HStack {
+                                Text(currentName(for: schedule))
+                                    .fontWeight(preferences.selectedScheduleID == schedule.id ? .semibold : .regular)
+                                Spacer()
+                                Text(remainingText(for: schedule))
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                                    .monospacedDigit()
+                                if preferences.selectedScheduleID == schedule.id {
+                                    Image(systemName: "checkmark.circle.fill")
+                                        .foregroundStyle(.tint)
+                                }
                             }
                         }
+                        .buttonStyle(.borderless)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 4)
                     }
-                    .buttonStyle(.borderless)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 4)
+
+                    if section.schedules.count > 8 {
+                        Text("추가 \(section.schedules.count - 8)개는 설정에서 확인할 수 있습니다.")
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                            .padding(.horizontal, 12)
+                            .padding(.bottom, 4)
+                    }
                 }
             }
 
             Divider()
+
+            Button { openNewSchedule() } label: {
+                Label("새 일정", systemImage: "plus")
+            }
+            .buttonStyle(.borderless)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 7)
 
             Button {
                 SettingsWindowManager.shared.show(preferences: preferences, updateChecker: updateChecker)
@@ -99,12 +120,23 @@ struct MenuContentView: View {
         .frame(width: 310)
     }
 
-    private var otherSchedules: [CountdownSchedule] {
-        preferences.scheduleSections().first(where: { $0.id == "other" })?.schedules ?? []
+    private func openNewSchedule() {
+        SettingsWindowManager.shared.show(preferences: preferences, updateChecker: updateChecker)
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(name: .timeLeftAddSchedule, object: nil)
+        }
     }
 
     private func currentName(for schedule: CountdownSchedule) -> String {
         let target = CountdownEngine.targetDate(schedule: schedule, now: Date(), calendar: .current)
         return CountdownEngine.displayName(schedule: schedule, target: target, calendar: .current)
+    }
+
+    private func remainingText(for schedule: CountdownSchedule) -> String {
+        let now = Date()
+        guard let target = CountdownEngine.targetDate(schedule: schedule, now: now, calendar: .current), target > now else {
+            return "완료"
+        }
+        return CountdownEngine.widgetDuration(target.timeIntervalSince(now))
     }
 }

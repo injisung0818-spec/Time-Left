@@ -29,12 +29,20 @@ final class GitHubReleaseChecker: ObservableObject {
     @Published private(set) var latestVersion: String?
 
     private let releasesURL = URL(string: "https://api.github.com/repos/injisung0818-spec/Time-Left/releases/latest")!
+    private var checkTask: Task<Void, Never>?
+    private var lastCheckedAt: Date?
 
     init() { checkForLatestRelease() }
 
     func checkForLatestRelease() {
+        guard checkTask == nil else { return }
+        if let lastCheckedAt, latestVersion != nil, Date().timeIntervalSince(lastCheckedAt) < 30 {
+            return
+        }
         status = .checking
-        Task {
+        checkTask = Task { [weak self] in
+            guard let self else { return }
+            defer { self.checkTask = nil; self.lastCheckedAt = Date() }
             do {
                 var request = URLRequest(url: releasesURL)
                 request.setValue("application/vnd.github+json", forHTTPHeaderField: "Accept")

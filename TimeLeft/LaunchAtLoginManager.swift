@@ -11,15 +11,11 @@ enum LaunchAtLoginManager {
         service.status == .requiresApproval
     }
 
-    static func registerIfNeeded() {
-        guard service.status == .notRegistered else { return }
-        try? service.register()
-    }
-
     static func setEnabled(_ enabled: Bool) throws {
         if enabled {
+            guard service.status != .enabled else { return }
             try service.register()
-        } else {
+        } else if service.status != .notRegistered {
             try service.unregister()
         }
     }

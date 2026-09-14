@@ -23,25 +23,27 @@ struct TimeLeftWidgetProvider: TimelineProvider {
     }
 
     func getSnapshot(in context: Context, completion: @escaping (TimeLeftWidgetEntry) -> Void) {
-        completion(makeEntry(at: Date()))
+        let preferences = Preferences(migrateLegacyData: false)
+        completion(makeEntry(at: Date(), preferences: preferences))
     }
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<TimeLeftWidgetEntry>) -> Void) {
         let now = Date()
+        let preferences = Preferences(migrateLegacyData: false)
         let entries = (0..<60).compactMap { minute -> TimeLeftWidgetEntry? in
             guard let date = Calendar.current.date(byAdding: .minute, value: minute, to: now) else { return nil }
-            return makeEntry(at: date)
+            return makeEntry(at: date, preferences: preferences)
         }
         let refreshDate = Calendar.current.date(byAdding: .minute, value: 60, to: now) ?? now.addingTimeInterval(3_600)
         completion(Timeline(entries: entries, policy: .after(refreshDate)))
     }
 
-    private func makeEntry(at date: Date) -> TimeLeftWidgetEntry {
-        let preferences = Preferences(migrateLegacyData: false)
-        let rows = preferences.schedules.map { schedule -> (WidgetSchedule, Date) in
-            let target = CountdownEngine.targetDate(schedule: schedule, now: date, calendar: .current)
-            let remaining = max(0, (target ?? date).timeIntervalSince(date))
-            let sortDate = target.map { $0 > date ? $0 : .distantFuture } ?? .distantFuture
+    private func makeEntry(at date: Date, preferences: Preferences) -> TimeLeftWidgetEntry {
+        let rows = preferences.schedules.compactMap { schedule -> (WidgetSchedule, Date)? in
+            guard !CountdownEngine.isExpiredOneTimeSchedule(schedule, now: date, calendar: .current),
+                  let target = CountdownEngine.targetDate(schedule: schedule, now: date, calendar: .current),
+                  target > date else { return nil }
+            let remaining = target.timeIntervalSince(date)
             return (
                 WidgetSchedule(
                     id: schedule.id,
@@ -49,7 +51,7 @@ struct TimeLeftWidgetProvider: TimelineProvider {
                     remaining: CountdownEngine.widgetDuration(remaining),
                     isSelected: schedule.id == preferences.selectedScheduleID
                 ),
-                sortDate
+                target
             )
         }
         .sorted { $0.1 < $1.1 }

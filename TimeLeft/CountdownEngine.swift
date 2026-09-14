@@ -79,6 +79,18 @@ enum CountdownEngine {
         }
     }
 
+    static func isExpiredOneTimeSchedule(_ schedule: CountdownSchedule, now: Date, calendar: Calendar) -> Bool {
+        guard let target = targetDate(schedule: schedule, now: now, calendar: calendar) else { return true }
+        switch schedule.kind {
+        case .weekdayTime:
+            return !schedule.repeatWeekly && target <= now
+        case .todayTime, .specificDate, .customDate:
+            return target <= now
+        case .yearEnd:
+            return false
+        }
+    }
+
     static func formatDuration(_ duration: TimeInterval, unit: DisplayUnit, calendar: Calendar = .current) -> String {
         let seconds = max(0, duration)
         switch unit {
@@ -216,6 +228,7 @@ final class CountdownModel: ObservableObject {
 
     init(preferences: Preferences) {
         self.preferences = preferences
+        preferences.selectNextUpcomingScheduleIfNeeded()
         snapshot = CountdownEngine.snapshot(preferences: preferences)
         preferencesCancellable = preferences.objectWillChange.sink { [weak self] _ in
             // @Published emits before the wrapped value is set; refresh on the next run-loop turn.
@@ -234,6 +247,7 @@ final class CountdownModel: ObservableObject {
     }
 
     func refresh() {
+        preferences.selectNextUpcomingScheduleIfNeeded()
         snapshot = CountdownEngine.snapshot(preferences: preferences)
     }
 }
