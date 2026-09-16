@@ -2,6 +2,8 @@
 
 [한국어](README.md) | English
 
+<img src="TimeLeft/Assets.xcassets/AppIcon.appiconset/icon_512x512.png" width="96" alt="Time Left app icon">
+
 Time Left is a macOS countdown utility that shows the remaining time to your selected event in the menu bar. Organize different contexts—such as school, work, and personal life—into profiles and groups, then quickly view the next event from the menu bar or a widget.
 
 Instructions for building from source are below. Prebuilt apps, when available, are published through [GitHub Releases](https://github.com/injisung0818-spec/Time-Left/releases).

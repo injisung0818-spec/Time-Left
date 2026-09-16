@@ -2,6 +2,8 @@
 
 한국어 | [English](README.en.md)
 
+<img src="TimeLeft/Assets.xcassets/AppIcon.appiconset/icon_512x512.png" width="96" alt="Time Left 앱 아이콘">
+
 Time Left는 메뉴 막대에서 선택한 일정까지의 남은 시간을 보여 주는 macOS 카운트다운 유틸리티입니다. 학교, 학원, 개인 일정처럼 서로 다른 맥락을 프로필과 그룹으로 정리하고, 메뉴바와 위젯에서 다음 일정을 빠르게 확인할 수 있습니다.
 
 소스에서 빌드하는 방법은 아래에 안내되어 있습니다. 사전 빌드된 앱은 준비되는 대로 [GitHub Releases](https://github.com/injisung0818-spec/Time-Left/releases)에서 제공합니다.
